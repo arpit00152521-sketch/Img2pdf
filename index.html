@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image to PDF Converter</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -227,6 +227,27 @@
             display: none;
         }
 
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -267,6 +288,11 @@
                 <i class="fas fa-folder-open"></i> Browse Files
             </button>
             <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
+        </div>
+
+        <div class="loading" id="loadingIndicator">
+            <div class="loading-spinner"></div>
+            <p>Converting images to PDF, please wait...</p>
         </div>
 
         <div class="preview-section" id="previewSection">
@@ -310,6 +336,7 @@
             const imageList = document.getElementById('imageList');
             const convertBtn = document.getElementById('convertBtn');
             const clearBtn = document.getElementById('clearBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
             
             let uploadedImages = [];
             
@@ -374,7 +401,8 @@
                                 return function(e) {
                                     const imageData = {
                                         name: theFile.name,
-                                        data: e.target.result
+                                        data: e.target.result,
+                                        file: theFile
                                     };
                                     
                                     uploadedImages.push(imageData);
@@ -429,20 +457,68 @@
             // Convert to PDF functionality
             convertBtn.addEventListener('click', convertToPdf);
             
-            function convertToPdf() {
+            async function convertToPdf() {
                 if (uploadedImages.length === 0) {
                     alert('Please add at least one image to convert.');
                     return;
                 }
                 
-                // In a real implementation, you would use a library like jsPDF
-                // This is a simplified example
-                alert(`Converting ${uploadedImages.length} images to PDF...\n\nIn a real implementation, this would generate and download a PDF file.`);
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                convertBtn.disabled = true;
                 
-                // Simulate download
-                setTimeout(() => {
-                    alert('PDF generated successfully! Your download should start shortly.');
-                }, 1000);
+                try {
+                    // Initialize jsPDF
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF();
+                    
+                    // Process each image and add to PDF
+                    for (let i = 0; i < uploadedImages.length; i++) {
+                        const imageData = uploadedImages[i].data;
+                        
+                        // Add a new page for each image after the first one
+                        if (i > 0) {
+                            pdf.addPage();
+                        }
+                        
+                        // Get image dimensions
+                        const img = new Image();
+                        await new Promise((resolve) => {
+                            img.onload = resolve;
+                            img.src = imageData;
+                        });
+                        
+                        // Calculate dimensions to fit the page
+                        const pageWidth = pdf.internal.pageSize.getWidth();
+                        const pageHeight = pdf.internal.pageSize.getHeight();
+                        
+                        let imgWidth = img.width;
+                        let imgHeight = img.height;
+                        
+                        // Scale image to fit page while maintaining aspect ratio
+                        const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+                        imgWidth *= ratio;
+                        imgHeight *= ratio;
+                        
+                        // Center the image on the page
+                        const x = (pageWidth - imgWidth) / 2;
+                        const y = (pageHeight - imgHeight) / 2;
+                        
+                        // Add image to PDF
+                        pdf.addImage(imageData, 'JPEG', x, y, imgWidth, imgHeight);
+                    }
+                    
+                    // Generate PDF and trigger download
+                    pdf.save('converted-images.pdf');
+                    
+                } catch (error) {
+                    console.error('Error generating PDF:', error);
+                    alert('An error occurred while generating the PDF. Please try again.');
+                } finally {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    convertBtn.disabled = false;
+                }
             }
             
             // Clear all images
@@ -453,5 +529,8 @@
             });
         });
     </script>
+    
+    <!-- Font Awesome for icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
-</html>
+    </html>
