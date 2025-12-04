@@ -3,1007 +3,2000 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All-in-One Media Tools</title>
+    <title>MelodyStream - Local & Online Music Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background-color: #f5f7fb;
-            color: var(--dark);
-            line-height: 1.6;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 80px;
         }
-        
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
         header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.5rem;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b82f6;
             margin-bottom: 10px;
         }
-        
+
         .logo i {
-            font-size: 2.5rem;
+            font-size: 36px;
         }
-        
-        .logo h1 {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-        
+
         .tagline {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
+            color: #94a3b8;
+            font-size: 16px;
+            margin-bottom: 20px;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-        
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .tool-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        /* Tab Navigation */
+        .tab-navigation {
             display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
-        }
-        
-        .tool-icon {
-            background: linear-gradient(135deg, var(--primary), var(--success));
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
-            color: white;
-            font-size: 1.8rem;
-        }
-        
-        .tool-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: var(--secondary);
-        }
-        
-        .tool-card p {
-            color: var(--gray);
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: center;
-            transition: background 0.3s ease;
-            text-decoration: none;
-        }
-        
-        .btn:hover {
-            background: var(--secondary);
-        }
-        
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-        
-        .tool-section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-            display: none;
-        }
-        
-        .tool-section.active {
-            display: block;
-        }
-        
-        .tool-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .tool-header h2 {
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
             gap: 10px;
-        }
-        
-        .back-btn {
-            background: #e9ecef;
-            color: var(--dark);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: #dee2e6;
-        }
-        
-        .upload-area {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 2.5rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            transition: border-color 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .upload-area:hover {
-            border-color: var(--primary);
-        }
-        
-        .upload-area i {
-            font-size: 3rem;
-            color: var(--gray);
-            margin-bottom: 1rem;
-        }
-        
-        .upload-area p {
-            color: var(--gray);
-            margin-bottom: 1rem;
-        }
-        
-        .file-input {
-            display: none;
-        }
-        
-        .preview-area {
-            margin: 1.5rem 0;
-            display: none;
-        }
-        
-        .preview-area img, .preview-area video, .preview-area canvas {
-            max-width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 1.5rem;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
-        
-        .control-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .control-group label {
-            display: block;
-            margin-bottom: 0.5rem;
+
+        .tab-btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            font-size: 16px;
             font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .control-group input, .control-group select, .control-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        
-        footer {
-            background: var(--dark);
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .footer-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .footer-content p {
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-        
-        .social-links {
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
         }
-        
-        .social-links a {
+
+        .tab-btn i {
+            font-size: 20px;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
             color: white;
-            font-size: 1.5rem;
-            transition: color 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
-        
-        .social-links a:hover {
-            color: var(--success);
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.15);
         }
-        
-        @media (max-width: 768px) {
-            .tools-grid {
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
                 grid-template-columns: 1fr;
             }
-            
-            .tool-section {
-                padding: 1.5rem;
+        }
+
+        /* Player Section */
+        .player-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            margin-bottom: 25px;
+            color: #3b82f6;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 20px;
+        }
+
+        .player {
+            text-align: center;
+        }
+
+        .album-art-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 30px;
+        }
+
+        .album-art {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mode-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .mode-badge.local {
+            background: rgba(34, 197, 94, 0.9);
+            color: white;
+        }
+
+        .mode-badge.online {
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+        }
+
+        .song-info {
+            margin-bottom: 25px;
+        }
+
+        .song-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #f8fafc;
+        }
+
+        .song-artist {
+            font-size: 18px;
+            color: #94a3b8;
+        }
+
+        .progress-area {
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .timer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .control-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: scale(1.05);
+        }
+
+        .play-pause {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            font-size: 24px;
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .play-pause:hover {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .volume-control i {
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        #volume-slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        #volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .player-status {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* Playlist/Library Section */
+        .library-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        #search-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        #search-btn:hover {
+            background: #2563eb;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .action-btn.primary {
+            background: #3b82f6;
+        }
+
+        .action-btn.primary:hover {
+            background: #2563eb;
+        }
+
+        .playlist-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .playlist-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .playlist-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .playlist-container::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+
+        .playlist {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .playlist-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .playlist-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .playlist-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .playlist-item-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-item-artist {
+            font-size: 14px;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-item-duration {
+            font-size: 14px;
+            color: #94a3b8;
+            min-width: 50px;
+        }
+
+        .song-icon {
+            color: #3b82f6;
+            font-size: 16px;
+            min-width: 20px;
+        }
+
+        .song-icon.local {
+            color: #10b981;
+        }
+
+        .song-icon.online {
+            color: #ef4444;
+        }
+
+        /* Local Section Specific */
+        .local-features {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .local-features h4 {
+            color: #10b981;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .feature-item i {
+            font-size: 24px;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+
+        .feature-item span {
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        /* Online Section Specific */
+        .online-features {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .online-features h4 {
+            color: #ef4444;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .suggestions {
+            margin-top: 20px;
+        }
+
+        .suggestion-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .suggestion-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+            color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .suggestion-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .quality-selector {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .quality-selector label {
+            color: #94a3b8;
+        }
+
+        .quality-selector select {
+            padding: 8px 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            outline: none;
+            min-width: 150px;
+        }
+
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+
+        .loading i {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #64748b;
+        }
+
+        .empty-state p {
+            margin-bottom: 10px;
+        }
+
+        /* Messages */
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .message.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .mode-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-top: 10px;
+        }
+
+        .mode-indicator i {
+            color: #3b82f6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
             }
             
-            .controls {
+            .main-content {
+                gap: 20px;
+            }
+            
+            .player-section, .library-section {
+                padding: 20px;
+            }
+            
+            .album-art-container {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .tab-btn {
+                min-width: 160px;
+                padding: 10px 20px;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .library-header {
                 flex-direction: column;
+                align-items: stretch;
             }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+
+        /* File Upload Styling */
+        #file-upload {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .file-upload-label:hover {
+            background: rgba(16, 185, 129, 0.2);
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <i class="fas fa-tools"></i>
-            <h1>All-in-One Media Tools</h1>
-        </div>
-        <p class="tagline">Free online tools for PDF, images, video, and document processing</p>
-    </header>
-    
     <div class="container">
-        <div class="tools-grid">
-            <!-- Tool 1 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <h3>PDF Tools</h3>
-                <p>Read, edit, and convert PDF files to images with our easy-to-use PDF tools.</p>
-                <button class="btn btn-block" onclick="showTool('pdf-tools')">Use Tool</button>
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-music"></i>
+                <span>MelodyStream</span>
             </div>
-            
-            <!-- Tool 2 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fas fa-file-image"></i>
-                </div>
-                <h3>Image to PDF</h3>
-                <p>Convert your images to PDF format quickly and easily. Supports JPG, PNG, and more.</p>
-                <button class="btn btn-block" onclick="showTool('img-to-pdf')">Use Tool</button>
-            </div>
-            
-            <!-- Tool 3 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fas fa-file-word"></i>
-                </div>
-                <h3>Word Tools</h3>
-                <p>Open, read, and edit Word documents online without any software installation.</p>
-                <button class="btn btn-block" onclick="showTool('word-tools')">Use Tool</button>
-            </div>
-            
-            <!-- Tool 4 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fas fa-font"></i>
-                </div>
-                <h3>Text to Word</h3>
-                <p>Convert plain text to Word document format with proper formatting options.</p>
-                <button class="btn btn-block" onclick="showTool('text-to-word')">Use Tool</button>
-            </div>
-            
-            <!-- Tool 5 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fas fa-image"></i>
-                </div>
-                <h3>Text on Image</h3>
-                <p>Add custom text to your images with various fonts, colors, and styling options.</p>
-                <button class="btn btn-block" onclick="showTool('text-on-image')">Use Tool</button>
-            </div>
-            
-            <!-- Tool 6 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fas fa-video"></i>
-                </div>
-                <h3>Video Tools</h3>
-                <p>Cut, trim, and convert videos to MP3 format. Edit your videos online for free.</p>
-                <button class="btn btn-block" onclick="showTool('video-tools')">Use Tool</button>
-            </div>
-            
-            <!-- Tool 7 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fab fa-youtube"></i>
-                </div>
-                <h3>YouTube Thumbnail</h3>
-                <p>Create eye-catching thumbnails for your YouTube videos with our easy tool.</p>
-                <button class="btn btn-block" onclick="showTool('youtube-thumbnail')">Use Tool</button>
-            </div>
-            
-            <!-- Tool 8 -->
-            <div class="tool-card">
-                <div class="tool-icon">
-                    <i class="fas fa-compress-arrows-alt"></i>
-                </div>
-                <h3>Image Compressor</h3>
-                <p>Reduce image file size without losing quality. Optimize images for web use.</p>
-                <button class="btn btn-block" onclick="showTool('image-compressor')">Use Tool</button>
-            </div>
+            <div class="tagline">Your Complete Music Solution - Local & Online</div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="local">
+                <i class="fas fa-folder-open"></i>
+                <span>Local Music Player</span>
+            </button>
+            <button class="tab-btn" data-tab="online">
+                <i class="fab fa-youtube"></i>
+                <span>Online Music Player</span>
+            </button>
         </div>
-        
-        <!-- PDF Tools Section -->
-        <div id="pdf-tools" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fas fa-file-pdf"></i> PDF Tools</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="upload-area" onclick="document.getElementById('pdf-upload').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Upload PDF File</h3>
-                <p>Click to upload or drag and drop your PDF file here</p>
-                <p class="small">Max file size: 10MB</p>
-                <input type="file" id="pdf-upload" class="file-input" accept=".pdf">
-            </div>
-            
-            <div class="preview-area" id="pdf-preview">
-                <canvas id="pdf-canvas"></canvas>
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="convertPdfToImg()"><i class="fas fa-download"></i> Convert to Image</button>
-                <button class="btn" onclick="editPdf()"><i class="fas fa-edit"></i> Edit PDF</button>
-            </div>
-        </div>
-        
-        <!-- Image to PDF Section -->
-        <div id="img-to-pdf" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fas fa-file-image"></i> Image to PDF Converter</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="upload-area" onclick="document.getElementById('img-upload-pdf').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Upload Images</h3>
-                <p>Click to upload or drag and drop your images here</p>
-                <p class="small">Supports JPG, PNG, GIF, WebP</p>
-                <input type="file" id="img-upload-pdf" class="file-input" accept="image/*" multiple>
-            </div>
-            
-            <div class="preview-area" id="img-preview-pdf">
-                <div id="img-gallery"></div>
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="convertImgToPdf()"><i class="fas fa-file-pdf"></i> Convert to PDF</button>
-            </div>
-        </div>
-        
-        <!-- Word Tools Section -->
-        <div id="word-tools" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fas fa-file-word"></i> Word Document Tools</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="upload-area" onclick="document.getElementById('word-upload').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Upload Word Document</h3>
-                <p>Click to upload or drag and drop your Word file here</p>
-                <p class="small">Supports .doc and .docx files</p>
-                <input type="file" id="word-upload" class="file-input" accept=".doc,.docx">
-            </div>
-            
-            <div class="preview-area" id="word-preview">
-                <div id="word-content"></div>
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="editWordDoc()"><i class="fas fa-edit"></i> Edit Document</button>
-                <button class="btn" onclick="downloadWordDoc()"><i class="fas fa-download"></i> Download</button>
-            </div>
-        </div>
-        
-        <!-- Text to Word Section -->
-        <div id="text-to-word" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fas fa-font"></i> Text to Word Converter</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="control-group">
-                <label for="text-input">Enter your text:</label>
-                <textarea id="text-input" rows="10" placeholder="Type or paste your text here..."></textarea>
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="convertTextToWord()"><i class="fas fa-file-word"></i> Convert to Word</button>
-            </div>
-        </div>
-        
-        <!-- Text on Image Section -->
-        <div id="text-on-image" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fas fa-image"></i> Add Text to Image</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="upload-area" onclick="document.getElementById('img-upload-text').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Upload Image</h3>
-                <p>Click to upload or drag and drop your image here</p>
-                <p class="small">Supports JPG, PNG, GIF, WebP</p>
-                <input type="file" id="img-upload-text" class="file-input" accept="image/*">
-            </div>
-            
-            <div class="preview-area" id="img-preview-text">
-                <canvas id="text-canvas"></canvas>
-            </div>
-            
-            <div class="control-group">
-                <label for="text-to-add">Text to add:</label>
-                <input type="text" id="text-to-add" placeholder="Enter text to add to image">
-            </div>
-            
-            <div class="control-group">
-                <label for="text-color">Text Color:</label>
-                <input type="color" id="text-color" value="#ffffff">
-            </div>
-            
-            <div class="control-group">
-                <label for="text-size">Text Size:</label>
-                <input type="range" id="text-size" min="10" max="100" value="30">
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="addTextToImage()"><i class="fas fa-plus"></i> Add Text</button>
-                <button class="btn" onclick="downloadTextImage()"><i class="fas fa-download"></i> Download Image</button>
-            </div>
-        </div>
-        
-        <!-- Video Tools Section -->
-        <div id="video-tools" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fas fa-video"></i> Video Tools</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="upload-area" onclick="document.getElementById('video-upload').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Upload Video</h3>
-                <p>Click to upload or drag and drop your video file here</p>
-                <p class="small">Supports MP4, AVI, MOV, MKV</p>
-                <input type="file" id="video-upload" class="file-input" accept="video/*">
-            </div>
-            
-            <div class="preview-area" id="video-preview">
-                <video id="video-player" controls></video>
-            </div>
-            
-            <div class="control-group">
-                <label for="start-time">Start Time (seconds):</label>
-                <input type="number" id="start-time" min="0" value="0">
-            </div>
-            
-            <div class="control-group">
-                <label for="end-time">End Time (seconds):</label>
-                <input type="number" id="end-time" min="0" value="10">
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="trimVideo()"><i class="fas fa-cut"></i> Trim Video</button>
-                <button class="btn" onclick="convertToMp3()"><i class="fas fa-music"></i> Convert to MP3</button>
-            </div>
-        </div>
-        
-        <!-- YouTube Thumbnail Section -->
-        <div id="youtube-thumbnail" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fab fa-youtube"></i> YouTube Thumbnail Maker</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="upload-area" onclick="document.getElementById('thumbnail-upload').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Upload Image for Thumbnail</h3>
-                <p>Click to upload or drag and drop your image here</p>
-                <p class="small">Recommended size: 1280x720 pixels</p>
-                <input type="file" id="thumbnail-upload" class="file-input" accept="image/*">
-            </div>
-            
-            <div class="preview-area" id="thumbnail-preview">
-                <canvas id="thumbnail-canvas"></canvas>
-            </div>
-            
-            <div class="control-group">
-                <label for="thumbnail-title">Thumbnail Title:</label>
-                <input type="text" id="thumbnail-title" placeholder="Enter title for your thumbnail">
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="createThumbnail()"><i class="fas fa-plus"></i> Create Thumbnail</button>
-                <button class="btn" onclick="downloadThumbnail()"><i class="fas fa-download"></i> Download Thumbnail</button>
-            </div>
-        </div>
-        
-        <!-- Image Compressor Section -->
-        <div id="image-compressor" class="tool-section">
-            <div class="tool-header">
-                <h2><i class="fas fa-compress-arrows-alt"></i> Image Compressor</h2>
-                <a href="#" class="back-btn" onclick="hideTools()"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-            </div>
-            
-            <div class="upload-area" onclick="document.getElementById('compress-upload').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Upload Image to Compress</h3>
-                <p>Click to upload or drag and drop your image here</p>
-                <p class="small">Supports JPG, PNG, GIF, WebP</p>
-                <input type="file" id="compress-upload" class="file-input" accept="image/*">
-            </div>
-            
-            <div class="preview-area" id="compress-preview">
-                <div class="image-comparison">
-                    <div class="original">
-                        <h4>Original Image</h4>
-                        <img id="original-img" src="" alt="Original">
-                        <p id="original-size"></p>
+
+        <!-- Local Music Player Section -->
+        <div class="tab-content active" id="local-tab">
+            <div class="main-content">
+                <!-- Player Section -->
+                <section class="player-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-play-circle"></i>
+                        Now Playing - Local Music
+                    </h2>
+                    <div class="player">
+                        <div class="album-art-container">
+                            <div class="album-art">
+                                <img id="local-album-art" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Album Art">
+                            </div>
+                            <div class="mode-badge local">
+                                <i class="fas fa-music"></i> Local
+                            </div>
+                        </div>
+                        
+                        <div class="song-info">
+                            <div class="song-title" id="local-song-title">No song selected</div>
+                            <div class="song-artist" id="local-song-artist">Select a song from your library</div>
+                        </div>
+                        
+                        <div class="progress-area">
+                            <div class="progress-bar" id="local-progress-bar">
+                                <div class="progress" id="local-progress"></div>
+                            </div>
+                            <div class="timer">
+                                <span id="local-current-time">0:00</span>
+                                <span id="local-duration">0:00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="controls">
+                            <button class="control-btn" id="local-prev-btn">
+                                <i class="fas fa-step-backward"></i>
+                            </button>
+                            <button class="control-btn play-pause" id="local-play-pause-btn">
+                                <i class="fas fa-play" id="local-play-pause-icon"></i>
+                            </button>
+                            <button class="control-btn" id="local-next-btn">
+                                <i class="fas fa-step-forward"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up"></i>
+                            <input type="range" id="local-volume-slider" min="0" max="100" value="70">
+                        </div>
+                        
+                        <div class="player-status" id="local-player-status">
+                            Ready to play local music
+                        </div>
                     </div>
-                    <div class="compressed">
-                        <h4>Compressed Image</h4>
-                        <img id="compressed-img" src="" alt="Compressed">
-                        <p id="compressed-size"></p>
+                </section>
+
+                <!-- Library Section -->
+                <section class="library-section">
+                    <div class="library-header">
+                        <div class="search-box">
+                            <div class="search-container">
+                                <input type="text" id="local-search-input" placeholder="Search local music...">
+                                <button id="local-search-btn">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <label for="file-upload" class="file-upload-label">
+                                <i class="fas fa-plus"></i> Add Music
+                            </label>
+                            <input type="file" id="file-upload" accept="audio/*" multiple>
+                            <button class="action-btn" id="refresh-local-btn">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
                     </div>
-                </div>
+                    
+                    <div class="playlist-container" id="local-playlist-container">
+                        <div class="playlist" id="local-playlist">
+                            <div class="empty-state" id="local-empty-state">
+                                <i class="fas fa-music"></i>
+                                <p>No local music found</p>
+                                <p>Add music files to get started</p>
+                                <label for="file-upload" class="file-upload-label" style="margin-top: 15px;">
+                                    <i class="fas fa-plus"></i> Add Music Files
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Local Features -->
+                    <div class="local-features">
+                        <h4><i class="fas fa-star"></i> Local Music Features</h4>
+                        <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 14px;">
+                            Play your personal music collection offline. No internet required!
+                        </p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <i class="fas fa-file-audio"></i>
+                                <span>MP3, WAV, OGG</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-folder"></i>
+                                <span>Folder Support</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-tags"></i>
+                                <span>ID3 Tags</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-playlist"></i>
+                                <span>Playlists</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-            
-            <div class="control-group">
-                <label for="compression-level">Compression Level:</label>
-                <input type="range" id="compression-level" min="0" max="100" value="50">
-                <span id="compression-value">50%</span>
+        </div>
+
+        <!-- Online Music Player Section -->
+        <div class="tab-content" id="online-tab">
+            <div class="main-content">
+                <!-- Player Section -->
+                <section class="player-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-globe"></i>
+                        Now Playing - Online Music
+                    </h2>
+                    <div class="player">
+                        <div class="album-art-container">
+                            <div class="album-art">
+                                <img id="online-album-art" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Album Art">
+                            </div>
+                            <div class="mode-badge online">
+                                <i class="fab fa-youtube"></i> YouTube
+                            </div>
+                        </div>
+                        
+                        <div class="song-info">
+                            <div class="song-title" id="online-song-title">Search for music online</div>
+                            <div class="song-artist" id="online-song-artist">YouTube Music - Free</div>
+                        </div>
+                        
+                        <div class="progress-area">
+                            <div class="progress-bar" id="online-progress-bar">
+                                <div class="progress" id="online-progress"></div>
+                            </div>
+                            <div class="timer">
+                                <span id="online-current-time">0:00</span>
+                                <span id="online-duration">0:00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="controls">
+                            <button class="control-btn" id="online-prev-btn">
+                                <i class="fas fa-step-backward"></i>
+                            </button>
+                            <button class="control-btn play-pause" id="online-play-pause-btn">
+                                <i class="fas fa-play" id="online-play-pause-icon"></i>
+                            </button>
+                            <button class="control-btn" id="online-next-btn">
+                                <i class="fas fa-step-forward"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up"></i>
+                            <input type="range" id="online-volume-slider" min="0" max="100" value="70">
+                        </div>
+                        
+                        <div class="quality-selector">
+                            <label for="quality-select">Quality:</label>
+                            <select id="quality-select">
+                                <option value="low">Low (64kbps)</option>
+                                <option value="medium" selected>Medium (128kbps)</option>
+                                <option value="high">High (192kbps)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="player-status" id="online-player-status">
+                            Search for music to play
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Search & Results Section -->
+                <section class="library-section">
+                    <div class="library-header">
+                        <div class="search-box">
+                            <div class="search-container">
+                                <input type="text" id="online-search-input" placeholder="Search YouTube for music...">
+                                <button id="online-search-btn">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn primary" id="trending-btn">
+                                <i class="fas fa-fire"></i> Trending
+                            </button>
+                            <button class="action-btn" id="clear-search-btn">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Suggestions -->
+                    <div class="suggestions">
+                        <p style="color: #94a3b8; margin-bottom: 10px;">Try these:</p>
+                        <div class="suggestion-buttons">
+                            <button class="suggestion-btn" data-query="latest bollywood songs">Bollywood</button>
+                            <button class="suggestion-btn" data-query="english pop 2024">Pop Music</button>
+                            <button class="suggestion-btn" data-query="punjabi songs">Punjabi</button>
+                            <button class="suggestion-btn" data-query="romantic songs">Romantic</button>
+                            <button class="suggestion-btn" data-query="workout music">Workout</button>
+                            <button class="suggestion-btn" data-query="instrumental music">Instrumental</button>
+                        </div>
+                    </div>
+                    
+                    <div class="playlist-container" id="online-playlist-container">
+                        <div class="playlist" id="online-playlist">
+                            <div class="empty-state" id="online-empty-state">
+                                <i class="fab fa-youtube"></i>
+                                <p>Search for music on YouTube</p>
+                                <p>Click suggestions above or type your search</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Online Features -->
+                    <div class="online-features">
+                        <h4><i class="fas fa-bolt"></i> Online Music Features</h4>
+                        <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 14px;">
+                            Stream millions of songs directly from YouTube - Completely FREE!
+                        </p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <i class="fab fa-youtube"></i>
+                                <span>YouTube Music</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-infinity"></i>
+                                <span>Unlimited Songs</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-search"></i>
+                                <span>Live Search</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-stream"></i>
+                                <span>Streaming</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="compressImage()"><i class="fas fa-compress-arrows-alt"></i> Compress Image</button>
-                <button class="btn" onclick="downloadCompressed()"><i class="fas fa-download"></i> Download Compressed</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>MelodyStream &copy; 2023 - Complete Music Player</p>
+            <div class="mode-indicator">
+                <i class="fas fa-info-circle"></i>
+                <span>Switch between Local and Online modes using tabs above</span>
             </div>
         </div>
     </div>
-    
-    <footer>
-        <div class="footer-content">
-            <p>All-in-One Media Tools - Free online tools for all your media processing needs</p>
-            <p>This website uses client-side processing only. Your files never leave your computer.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-github"></i></a>
-            </div>
-        </div>
-    </footer>
+
+    <!-- Audio Players (Hidden) -->
+    <audio id="local-audio-player" style="display: none;"></audio>
+    <audio id="online-audio-player" style="display: none;"></audio>
 
     <script>
-        // Global variables
-        let currentTool = null;
-        let currentPdfDoc = null;
-        let currentPageNum = 1;
+        // ==================== LOCAL MUSIC PLAYER ====================
         
-        // Show/hide tool sections
-        function showTool(toolId) {
-            // Hide all tool sections
-            document.querySelectorAll('.tool-section').forEach(section => {
-                section.classList.remove('active');
+        // Local player elements
+        const localAudioPlayer = document.getElementById('local-audio-player');
+        const localPlayPauseBtn = document.getElementById('local-play-pause-btn');
+        const localPlayPauseIcon = document.getElementById('local-play-pause-icon');
+        const localPrevBtn = document.getElementById('local-prev-btn');
+        const localNextBtn = document.getElementById('local-next-btn');
+        const localProgressBar = document.getElementById('local-progress-bar');
+        const localProgress = document.getElementById('local-progress');
+        const localCurrentTimeEl = document.getElementById('local-current-time');
+        const localDurationEl = document.getElementById('local-duration');
+        const localVolumeSlider = document.getElementById('local-volume-slider');
+        const localSongTitle = document.getElementById('local-song-title');
+        const localSongArtist = document.getElementById('local-song-artist');
+        const localAlbumArt = document.getElementById('local-album-art');
+        const localPlayerStatus = document.getElementById('local-player-status');
+        const localPlaylist = document.getElementById('local-playlist');
+        const localEmptyState = document.getElementById('local-empty-state');
+        const localSearchInput = document.getElementById('local-search-input');
+        const localSearchBtn = document.getElementById('local-search-btn');
+        const fileUpload = document.getElementById('file-upload');
+        const refreshLocalBtn = document.getElementById('refresh-local-btn');
+
+        // Local player state
+        let localCurrentSongIndex = 0;
+        let isLocalPlaying = false;
+        let localMusicLibrary = [];
+        let filteredLocalLibrary = [];
+        let localProgressInterval;
+
+        // Initialize local player
+        function initLocalPlayer() {
+            // Load saved music library from localStorage
+            loadLocalMusicLibrary();
+            
+            // Setup audio player events
+            localAudioPlayer.addEventListener('timeupdate', updateLocalProgress);
+            localAudioPlayer.addEventListener('loadedmetadata', updateLocalDuration);
+            localAudioPlayer.addEventListener('ended', playLocalNextSong);
+            localAudioPlayer.addEventListener('error', handleLocalAudioError);
+            
+            // Setup event listeners
+            localPlayPauseBtn.addEventListener('click', toggleLocalPlayPause);
+            localPrevBtn.addEventListener('click', playLocalPrevSong);
+            localNextBtn.addEventListener('click', playLocalNextSong);
+            
+            localProgressBar.addEventListener('click', setLocalProgress);
+            localVolumeSlider.addEventListener('input', setLocalVolume);
+            
+            localSearchBtn.addEventListener('click', searchLocalMusic);
+            localSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchLocalMusic();
             });
             
-            // Show the selected tool
-            document.getElementById(toolId).classList.add('active');
-            currentTool = toolId;
+            fileUpload.addEventListener('change', handleFileUpload);
+            refreshLocalBtn.addEventListener('click', loadLocalMusicLibrary);
             
-            // Scroll to the tool section
-            document.getElementById(toolId).scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        function hideTools() {
-            document.querySelectorAll('.tool-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            currentTool = null;
+            // Render initial playlist
+            renderLocalPlaylist();
             
-            // Scroll back to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            console.log("Local Music Player initialized");
         }
-        
-        // PDF Tools functionality
-        document.getElementById('pdf-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && file.type === 'application/pdf') {
-                const fileReader = new FileReader();
-                
-                fileReader.onload = function() {
-                    const typedarray = new Uint8Array(this.result);
-                    
-                    // Load the PDF
-                    pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
-                        currentPdfDoc = pdf;
-                        currentPageNum = 1;
-                        renderPage(currentPageNum);
-                        
-                        // Show preview area
-                        document.getElementById('pdf-preview').style.display = 'block';
-                    });
-                };
-                
-                fileReader.readAsArrayBuffer(file);
+
+        // Load local music library from localStorage
+        function loadLocalMusicLibrary() {
+            const savedLibrary = localStorage.getItem('melodyStreamLocalLibrary');
+            
+            if (savedLibrary) {
+                localMusicLibrary = JSON.parse(savedLibrary);
+                filteredLocalLibrary = [...localMusicLibrary];
+                renderLocalPlaylist();
+                showLocalMessage(`Loaded ${localMusicLibrary.length} local songs`, 'success');
             } else {
-                alert('Please upload a valid PDF file.');
+                // Add some demo local songs
+                localMusicLibrary = getDemoLocalSongs();
+                filteredLocalLibrary = [...localMusicLibrary];
+                renderLocalPlaylist();
+                showLocalMessage("Added demo songs to get started", 'info');
             }
-        });
-        
-        function renderPage(pageNum) {
-            currentPdfDoc.getPage(pageNum).then(function(page) {
-                const viewport = page.getViewport({ scale: 1.5 });
-                const canvas = document.getElementById('pdf-canvas');
-                const context = canvas.getContext('2d');
-                
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                
-                page.render(renderContext);
-            });
         }
-        
-        function convertPdfToImg() {
-            if (!currentPdfDoc) {
-                alert('Please upload a PDF first.');
-                return;
-            }
-            
-            const canvas = document.getElementById('pdf-canvas');
-            const image = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = 'converted-page.png';
-            link.click();
-        }
-        
-        function editPdf() {
-            alert('PDF editing functionality would require a more advanced library. This is a demonstration of the interface.');
-        }
-        
-        // Image to PDF functionality
-        document.getElementById('img-upload-pdf').addEventListener('change', function(e) {
-            const files = e.target.files;
-            const gallery = document.getElementById('img-gallery');
-            gallery.innerHTML = '';
-            
-            if (files.length > 0) {
-                document.getElementById('img-preview-pdf').style.display = 'block';
-                
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.maxWidth = '200px';
-                        img.style.margin = '5px';
-                        gallery.appendChild(img);
-                    };
-                    
-                    reader.readAsDataURL(file);
+
+        // Get demo local songs for initial setup
+        function getDemoLocalSongs() {
+            return [
+                {
+                    id: 'demo1',
+                    title: 'Sample Song 1',
+                    artist: 'Local Artist',
+                    duration: '3:45',
+                    url: 'https://assets.codepen.io/4358584/blinding-lights.mp3',
+                    thumbnail: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'
+                },
+                {
+                    id: 'demo2',
+                    title: 'Sample Song 2',
+                    artist: 'Demo Artist',
+                    duration: '4:20',
+                    url: 'https://assets.codepen.io/4358584/shape-of-you.mp3',
+                    thumbnail: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'
                 }
-            }
-        });
-        
-        function convertImgToPdf() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const gallery = document.getElementById('img-gallery');
-            const images = gallery.getElementsByTagName('img');
+            ];
+        }
+
+        // Handle file upload
+        function handleFileUpload(event) {
+            const files = event.target.files;
             
-            if (images.length === 0) {
-                alert('Please upload at least one image.');
+            if (files.length === 0) return;
+            
+            showLocalMessage(`Adding ${files.length} music file(s)...`, 'info');
+            
+            Array.from(files).forEach((file, index) => {
+                if (file.type.startsWith('audio/')) {
+                    const objectURL = URL.createObjectURL(file);
+                    
+                    const newSong = {
+                        id: `local_${Date.now()}_${index}`,
+                        title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+                        artist: 'Local File',
+                        duration: '--:--',
+                        url: objectURL,
+                        thumbnail: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80',
+                        file: file.name
+                    };
+                    
+                    localMusicLibrary.push(newSong);
+                    
+                    // Try to read audio metadata
+                    const audio = new Audio();
+                    audio.src = objectURL;
+                    audio.addEventListener('loadedmetadata', () => {
+                        newSong.duration = formatTime(audio.duration);
+                        saveLocalLibrary();
+                        renderLocalPlaylist();
+                    });
+                }
+            });
+            
+            // Save to localStorage
+            saveLocalLibrary();
+            
+            // Render updated playlist
+            filteredLocalLibrary = [...localMusicLibrary];
+            renderLocalPlaylist();
+            
+            showLocalMessage(`Added ${files.length} song(s) to library`, 'success');
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Save local library to localStorage
+        function saveLocalLibrary() {
+            // Remove file objects before saving (they can't be serialized)
+            const libraryToSave = localMusicLibrary.map(song => ({
+                ...song,
+                url: song.url // Keep URL, but file object won't be saved
+            }));
+            
+            localStorage.setItem('melodyStreamLocalLibrary', JSON.stringify(libraryToSave));
+        }
+
+        // Search local music
+        function searchLocalMusic() {
+            const query = localSearchInput.value.trim().toLowerCase();
+            
+            if (!query) {
+                filteredLocalLibrary = [...localMusicLibrary];
+                renderLocalPlaylist();
                 return;
             }
             
-            // For demonstration, we'll just add the first image
-            const imgData = images[0].src;
-            doc.addImage(imgData, 'JPEG', 10, 10, 190, 0);
-            doc.save('converted.pdf');
-        }
-        
-        // Word Tools functionality
-        document.getElementById('word-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && (file.name.endsWith('.doc') || file.name.endsWith('.docx'))) {
-                document.getElementById('word-preview').style.display = 'block';
-                document.getElementById('word-content').innerHTML = `
-                    <p>Word document preview is limited in browser-based applications.</p>
-                    <p>File name: ${file.name}</p>
-                    <p>File size: ${(file.size / 1024).toFixed(2)} KB</p>
-                    <p>For full editing capabilities, consider using dedicated office software.</p>
-                `;
+            filteredLocalLibrary = localMusicLibrary.filter(song => 
+                song.title.toLowerCase().includes(query) ||
+                song.artist.toLowerCase().includes(query)
+            );
+            
+            renderLocalPlaylist();
+            
+            if (filteredLocalLibrary.length === 0) {
+                showLocalMessage(`No local songs found for "${query}"`, 'error');
             } else {
-                alert('Please upload a valid Word document (.doc or .docx).');
+                showLocalMessage(`Found ${filteredLocalLibrary.length} songs`, 'success');
             }
-        });
-        
-        function editWordDoc() {
-            alert('Word document editing in browser is limited. This is a demonstration of the interface.');
         }
-        
-        function downloadWordDoc() {
-            alert('In a real application, this would download the edited Word document.');
-        }
-        
-        // Text to Word functionality
-        function convertTextToWord() {
-            const text = document.getElementById('text-input').value;
-            if (!text) {
-                alert('Please enter some text to convert.');
+
+        // Render local playlist
+        function renderLocalPlaylist() {
+            localPlaylist.innerHTML = '';
+            
+            if (filteredLocalLibrary.length === 0) {
+                localEmptyState.style.display = 'block';
                 return;
             }
             
-            // Create a Blob with the text
-            const blob = new Blob([text], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'converted-text.doc';
-            link.click();
+            localEmptyState.style.display = 'none';
             
-            // Clean up
-            URL.revokeObjectURL(url);
+            filteredLocalLibrary.forEach((song, index) => {
+                const playlistItem = document.createElement('div');
+                playlistItem.className = `playlist-item ${index === localCurrentSongIndex ? 'active' : ''}`;
+                playlistItem.dataset.index = index;
+                
+                playlistItem.innerHTML = `
+                    <img src="${song.thumbnail}" alt="${song.title}" onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'">
+                    <div class="playlist-item-info">
+                        <div class="playlist-item-title">${song.title}</div>
+                        <div class="playlist-item-artist">${song.artist}</div>
+                    </div>
+                    <div class="playlist-item-duration">${song.duration}</div>
+                    <i class="fas fa-music song-icon local"></i>
+                `;
+                
+                playlistItem.addEventListener('click', () => {
+                    loadLocalSong(index);
+                    if (!isLocalPlaying) playLocalSong();
+                });
+                
+                localPlaylist.appendChild(playlistItem);
+            });
         }
-        
-        // Text on Image functionality
-        document.getElementById('img-upload-text').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.getElementById('text-canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        
-                        ctx.drawImage(img, 0, 0);
-                        document.getElementById('img-preview-text').style.display = 'block';
-                    };
-                    
-                    img.src = e.target.result;
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        function addTextToImage() {
-            const canvas = document.getElementById('text-canvas');
-            const ctx = canvas.getContext('2d');
-            const text = document.getElementById('text-to-add').value;
-            const color = document.getElementById('text-color').value;
-            const size = document.getElementById('text-size').value;
+
+        // Load local song
+        function loadLocalSong(index) {
+            if (index < 0 || index >= filteredLocalLibrary.length) return;
             
-            if (!text) {
-                alert('Please enter some text to add to the image.');
+            localCurrentSongIndex = index;
+            const song = filteredLocalLibrary[index];
+            
+            // Update UI
+            localSongTitle.textContent = song.title;
+            localSongArtist.textContent = song.artist;
+            localAlbumArt.src = song.thumbnail;
+            localPlayerStatus.textContent = `Playing: ${song.title}`;
+            
+            // Load audio
+            localAudioPlayer.src = song.url;
+            
+            // Reset progress
+            localProgress.style.width = '0%';
+            localCurrentTimeEl.textContent = '0:00';
+            localDurationEl.textContent = song.duration;
+            
+            // Update active item
+            updateLocalActivePlaylistItem();
+        }
+
+        // Toggle local play/pause
+        function toggleLocalPlayPause() {
+            if (isLocalPlaying) {
+                pauseLocalSong();
+            } else {
+                playLocalSong();
+            }
+        }
+
+        // Play local song
+        function playLocalSong() {
+            if (filteredLocalLibrary.length === 0) {
+                showLocalMessage("No local songs available. Add some music files.", 'error');
                 return;
             }
             
-            ctx.font = `${size}px Arial`;
-            ctx.fillStyle = color;
-            ctx.textAlign = 'center';
-            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-        }
-        
-        function downloadTextImage() {
-            const canvas = document.getElementById('text-canvas');
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = 'image-with-text.png';
-            link.click();
-        }
-        
-        // Video Tools functionality
-        document.getElementById('video-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const videoPlayer = document.getElementById('video-player');
-                videoPlayer.src = URL.createObjectURL(file);
-                document.getElementById('video-preview').style.display = 'block';
+            // If no song is loaded, load the first one
+            if (!localAudioPlayer.src || localAudioPlayer.src === '') {
+                loadLocalSong(0);
             }
-        });
-        
-        function trimVideo() {
-            alert('Video trimming functionality would require a more advanced library. This is a demonstration of the interface.');
-        }
-        
-        function convertToMp3() {
-            alert('Video to MP3 conversion would require server-side processing. This is a demonstration of the interface.');
-        }
-        
-        // YouTube Thumbnail functionality
-        document.getElementById('thumbnail-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.getElementById('thumbnail-canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        // Set canvas to YouTube thumbnail size
-                        canvas.width = 1280;
-                        canvas.height = 720;
-                        
-                        // Draw image scaled to fit
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        document.getElementById('thumbnail-preview').style.display = 'block';
-                    };
-                    
-                    img.src = e.target.result;
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        function createThumbnail() {
-            const canvas = document.getElementById('thumbnail-canvas');
-            const ctx = canvas.getContext('2d');
-            const title = document.getElementById('thumbnail-title').value;
             
-            if (title) {
-                // Add a semi-transparent overlay
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            localAudioPlayer.play().then(() => {
+                isLocalPlaying = true;
+                localPlayPauseIcon.classList.remove('fa-play');
+                localPlayPauseIcon.classList.add('fa-pause');
+                startLocalProgressTimer();
+            }).catch(e => {
+                console.error("Local play error:", e);
+                showLocalMessage("Could not play audio file", 'error');
+            });
+        }
+
+        // Pause local song
+        function pauseLocalSong() {
+            isLocalPlaying = false;
+            localPlayPauseIcon.classList.remove('fa-pause');
+            localPlayPauseIcon.classList.add('fa-play');
+            stopLocalProgressTimer();
+            localAudioPlayer.pause();
+        }
+
+        // Play previous local song
+        function playLocalPrevSong() {
+            let prevIndex = localCurrentSongIndex - 1;
+            if (prevIndex < 0) prevIndex = filteredLocalLibrary.length - 1;
+            
+            loadLocalSong(prevIndex);
+            if (isLocalPlaying) playLocalSong();
+        }
+
+        // Play next local song
+        function playLocalNextSong() {
+            let nextIndex = localCurrentSongIndex + 1;
+            if (nextIndex >= filteredLocalLibrary.length) nextIndex = 0;
+            
+            loadLocalSong(nextIndex);
+            if (isLocalPlaying) playLocalSong();
+        }
+
+        // Update local progress
+        function updateLocalProgress() {
+            const { currentTime, duration } = localAudioPlayer;
+            if (duration > 0) {
+                const progressPercent = (currentTime / duration) * 100;
+                localProgress.style.width = `${progressPercent}%`;
                 
-                // Add title text
-                ctx.font = 'bold 60px Arial';
-                ctx.fillStyle = '#ffffff';
-                ctx.textAlign = 'center';
-                ctx.fillText(title, canvas.width / 2, canvas.height / 2);
+                localCurrentTimeEl.textContent = formatTime(currentTime);
             }
         }
-        
-        function downloadThumbnail() {
-            const canvas = document.getElementById('thumbnail-canvas');
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = 'youtube-thumbnail.png';
-            link.click();
-        }
-        
-        // Image Compressor functionality
-        document.getElementById('compress-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const originalImg = document.getElementById('original-img');
-                    originalImg.src = e.target.result;
-                    
-                    document.getElementById('original-size').textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
-                    document.getElementById('compress-preview').style.display = 'block';
-                };
-                
-                reader.readAsDataURL(file);
+
+        // Update local duration
+        function updateLocalDuration() {
+            if (localAudioPlayer.duration > 0) {
+                localDurationEl.textContent = formatTime(localAudioPlayer.duration);
             }
-        });
-        
-        document.getElementById('compression-level').addEventListener('input', function() {
-            document.getElementById('compression-value').textContent = `${this.value}%`;
-        });
-        
-        function compressImage() {
-            const originalImg = document.getElementById('original-img');
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const compressionLevel = document.getElementById('compression-level').value / 100;
-            
-            canvas.width = originalImg.width;
-            canvas.height = originalImg.height;
-            
-            ctx.drawImage(originalImg, 0, 0);
-            
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', compressionLevel);
-            const compressedImg = document.getElementById('compressed-img');
-            compressedImg.src = compressedDataUrl;
-            
-            // Calculate compressed size (approximate)
-            const compressedSize = Math.round((compressedDataUrl.length * 3) / 4);
-            document.getElementById('compressed-size').textContent = `Size: ${(compressedSize / 1024).toFixed(2)} KB`;
         }
+
+        // Set local progress
+        function setLocalProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = localAudioPlayer.duration;
+            
+            if (duration > 0) {
+                localAudioPlayer.currentTime = (clickX / width) * duration;
+            }
+        }
+
+        // Set local volume
+        function setLocalVolume() {
+            localAudioPlayer.volume = localVolumeSlider.value / 100;
+        }
+
+        // Start local progress timer
+        function startLocalProgressTimer() {
+            stopLocalProgressTimer();
+            localProgressInterval = setInterval(updateLocalProgress, 1000);
+        }
+
+        // Stop local progress timer
+        function stopLocalProgressTimer() {
+            if (localProgressInterval) {
+                clearInterval(localProgressInterval);
+                localProgressInterval = null;
+            }
+        }
+
+        // Handle local audio error
+        function handleLocalAudioError(e) {
+            console.error("Local audio error:", e);
+            showLocalMessage("Error playing audio file. Trying next song...", 'error');
+            setTimeout(() => playLocalNextSong(), 2000);
+        }
+
+        // Update local active playlist item
+        function updateLocalActivePlaylistItem() {
+            document.querySelectorAll('#local-playlist .playlist-item').forEach((item, index) => {
+                if (index === localCurrentSongIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Show local message
+        function showLocalMessage(message, type = 'info') {
+            // Remove existing messages
+            const existingMsg = document.querySelector('#local-tab .message');
+            if (existingMsg) existingMsg.remove();
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${type}`;
+            messageEl.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+            
+            localPlaylistContainer.insertBefore(messageEl, localPlaylist);
+            
+            setTimeout(() => {
+                if (messageEl.parentNode) {
+                    messageEl.remove();
+                }
+            }, 3000);
+        }
+
+        // ==================== ONLINE MUSIC PLAYER ====================
         
-        function downloadCompressed() {
-            const compressedImg = document.getElementById('compressed-img');
-            if (!compressedImg.src) {
-                alert('Please compress an image first.');
+        // Online player elements
+        const onlineAudioPlayer = document.getElementById('online-audio-player');
+        const onlinePlayPauseBtn = document.getElementById('online-play-pause-btn');
+        const onlinePlayPauseIcon = document.getElementById('online-play-pause-icon');
+        const onlinePrevBtn = document.getElementById('online-prev-btn');
+        const onlineNextBtn = document.getElementById('online-next-btn');
+        const onlineProgressBar = document.getElementById('online-progress-bar');
+        const onlineProgress = document.getElementById('online-progress');
+        const onlineCurrentTimeEl = document.getElementById('online-current-time');
+        const onlineDurationEl = document.getElementById('online-duration');
+        const onlineVolumeSlider = document.getElementById('online-volume-slider');
+        const onlineSongTitle = document.getElementById('online-song-title');
+        const onlineSongArtist = document.getElementById('online-song-artist');
+        const onlineAlbumArt = document.getElementById('online-album-art');
+        const onlinePlayerStatus = document.getElementById('online-player-status');
+        const onlinePlaylist = document.getElementById('online-playlist');
+        const onlineEmptyState = document.getElementById('online-empty-state');
+        const onlineSearchInput = document.getElementById('online-search-input');
+        const onlineSearchBtn = document.getElementById('online-search-btn');
+        const trendingBtn = document.getElementById('trending-btn');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const qualitySelect = document.getElementById('quality-select');
+        const suggestionButtons = document.querySelectorAll('.suggestion-btn');
+
+        // Online player state
+        let onlineCurrentSongIndex = 0;
+        let isOnlinePlaying = false;
+        let onlineMusicLibrary = [];
+        let onlineProgressInterval;
+        let currentOnlineAudioUrl = '';
+
+        // Featured online songs
+        const featuredOnlineSongs = [
+            {
+                id: 'kJQP7kiw5Fk',
+                title: 'Despacito',
+                artist: 'Luis Fonsi ft. Daddy Yankee',
+                thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/mqdefault.jpg',
+                duration: '4:41'
+            },
+            {
+                id: 'JGwWNGJdvx8',
+                title: 'Shape of You',
+                artist: 'Ed Sheeran',
+                thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/mqdefault.jpg',
+                duration: '3:53'
+            },
+            {
+                id: '09R8_2nJtjg',
+                title: 'Rockstar',
+                artist: 'Post Malone',
+                thumbnail: 'https://i.ytimg.com/vi/UceaB4D0jpo/mqdefault.jpg',
+                duration: '3:38'
+            },
+            {
+                id: 'RgKAFK5djSk',
+                title: 'See You Again',
+                artist: 'Wiz Khalifa ft. Charlie Puth',
+                thumbnail: 'https://i.ytimg.com/vi/RgKAFK5djSk/mqdefault.jpg',
+                duration: '3:57'
+            }
+        ];
+
+        // Initialize online player
+        function initOnlinePlayer() {
+            // Load featured songs
+            onlineMusicLibrary = [...featuredOnlineSongs];
+            renderOnlinePlaylist();
+            
+            // Setup audio player events
+            onlineAudioPlayer.addEventListener('timeupdate', updateOnlineProgress);
+            onlineAudioPlayer.addEventListener('loadedmetadata', updateOnlineDuration);
+            onlineAudioPlayer.addEventListener('ended', playOnlineNextSong);
+            onlineAudioPlayer.addEventListener('error', handleOnlineAudioError);
+            onlineAudioPlayer.addEventListener('canplay', handleOnlineAudioCanPlay);
+            
+            // Setup event listeners
+            onlinePlayPauseBtn.addEventListener('click', toggleOnlinePlayPause);
+            onlinePrevBtn.addEventListener('click', playOnlinePrevSong);
+            onlineNextBtn.addEventListener('click', playOnlineNextSong);
+            
+            onlineProgressBar.addEventListener('click', setOnlineProgress);
+            onlineVolumeSlider.addEventListener('input', setOnlineVolume);
+            
+            onlineSearchBtn.addEventListener('click', searchOnlineMusic);
+            onlineSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchOnlineMusic();
+            });
+            
+            trendingBtn.addEventListener('click', () => {
+                onlineSearchInput.value = 'trending songs 2024';
+                searchOnlineMusic();
+            });
+            
+            clearSearchBtn.addEventListener('click', () => {
+                onlineSearchInput.value = '';
+                onlineMusicLibrary = [...featuredOnlineSongs];
+                renderOnlinePlaylist();
+                showOnlineMessage("Showing featured songs", 'info');
+            });
+            
+            qualitySelect.addEventListener('change', () => {
+                if (onlineMusicLibrary.length > 0) {
+                    loadOnlineSong(onlineCurrentSongIndex);
+                }
+            });
+            
+            // Suggestion buttons
+            suggestionButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const query = btn.getAttribute('data-query');
+                    onlineSearchInput.value = query;
+                    searchOnlineMusic();
+                });
+            });
+            
+            console.log("Online Music Player initialized");
+        }
+
+        // Search online music (free method)
+        async function searchOnlineMusic() {
+            const query = onlineSearchInput.value.trim();
+            
+            if (!query) {
+                showOnlineMessage("Please enter a search term", 'error');
                 return;
             }
             
-            const link = document.createElement('a');
-            link.href = compressedImg.src;
-            link.download = 'compressed-image.jpg';
-            link.click();
+            // Show loading
+            onlineEmptyState.innerHTML = `
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Searching YouTube for "${query}"...</p>
+            `;
+            
+            try {
+                const results = await searchYouTubeFree(query);
+                
+                if (results.length > 0) {
+                    onlineMusicLibrary = results;
+                    renderOnlinePlaylist();
+                    showOnlineMessage(`Found ${results.length} songs for "${query}"`, 'success');
+                } else {
+                    showOnlineMessage(`No results found. Try different keywords.`, 'error');
+                    onlineMusicLibrary = [...featuredOnlineSongs];
+                    renderOnlinePlaylist();
+                }
+            } catch (error) {
+                console.error("Online search error:", error);
+                showOnlineMessage("Search failed. Showing featured songs.", 'error');
+                onlineMusicLibrary = [...featuredOnlineSongs];
+                renderOnlinePlaylist();
+            }
         }
+
+        // Free YouTube search
+        async function searchYouTubeFree(query) {
+            try {
+                // Use free search API
+                const response = await fetch(`https://youtube-search-api.johndp.dev/search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        type: 'video'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.items.map(item => ({
+                        id: item.videoId,
+                        title: item.title,
+                        artist: item.channelTitle || 'Unknown Artist',
+                        thumbnail: item.thumbnail || `https://i.ytimg.com/vi/${item.videoId}/mqdefault.jpg`,
+                        duration: formatSeconds(item.duration || 180)
+                    }));
+                }
+                
+                throw new Error('Search failed');
+                
+            } catch (error) {
+                console.error("YouTube search error:", error);
+                // Fallback to featured songs
+                return [...featuredOnlineSongs];
+            }
+        }
+
+        // Get audio URL from free service
+        async function getOnlineAudioUrl(videoId, quality = 'medium') {
+            try {
+                // Try multiple free services
+                const services = [
+                    'https://yt5s.io/api/ajaxSearch',
+                    'https://yt1s.io/api/ajaxSearch/index'
+                ];
+                
+                for (const service of services) {
+                    try {
+                        const response = await fetch(service, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                'q': `https://www.youtube.com/watch?v=${videoId}`,
+                                'vt': 'mp3'
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.d_url || (data.links && data.links.mp3)) {
+                                return data.d_url || Object.values(data.links.mp3)[0]?.dlink;
+                            }
+                        }
+                    } catch (err) {
+                        continue; // Try next service
+                    }
+                }
+                
+                // Ultimate fallback: demo audio
+                const demoAudios = [
+                    'https://assets.codepen.io/4358584/blinding-lights.mp3',
+                    'https://assets.codepen.io/4358584/shape-of-you.mp3',
+                    'https://assets.codepen.io/4358584/dance-monkey.mp3'
+                ];
+                
+                const hash = videoId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                return demoAudios[hash % demoAudios.length];
+                
+            } catch (error) {
+                console.error("Audio URL error:", error);
+                return 'https://assets.codepen.io/4358584/blinding-lights.mp3';
+            }
+        }
+
+        // Render online playlist
+        function renderOnlinePlaylist() {
+            onlinePlaylist.innerHTML = '';
+            
+            if (onlineMusicLibrary.length === 0) {
+                onlineEmptyState.style.display = 'block';
+                return;
+            }
+            
+            onlineEmptyState.style.display = 'none';
+            
+            onlineMusicLibrary.forEach((song, index) => {
+                const playlistItem = document.createElement('div');
+                playlistItem.className = `playlist-item ${index === onlineCurrentSongIndex ? 'active' : ''}`;
+                playlistItem.dataset.index = index;
+                
+                playlistItem.innerHTML = `
+                    <img src="${song.thumbnail}" alt="${song.title}" onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80'">
+                    <div class="playlist-item-info">
+                        <div class="playlist-item-title">${song.title}</div>
+                        <div class="playlist-item-artist">${song.artist}</div>
+                    </div>
+                    <div class="playlist-item-duration">${song.duration}</div>
+                    <i class="fab fa-youtube song-icon online"></i>
+                `;
+                
+                playlistItem.addEventListener('click', async () => {
+                    await loadOnlineSong(index);
+                    if (!isOnlinePlaying) playOnlineSong();
+                });
+                
+                onlinePlaylist.appendChild(playlistItem);
+            });
+        }
+
+        // Load online song
+        async function loadOnlineSong(index) {
+            if (index < 0 || index >= onlineMusicLibrary.length) return;
+            
+            onlineCurrentSongIndex = index;
+            const song = onlineMusicLibrary[index];
+            
+            // Update UI
+            onlineSongTitle.textContent = song.title;
+            onlineSongArtist.textContent = song.artist;
+            onlineAlbumArt.src = song.thumbnail;
+            onlinePlayerStatus.textContent = `Loading: ${song.title}`;
+            
+            // Show loading state
+            onlineSongTitle.textContent = `Loading: ${song.title}`;
+            onlinePlayPauseIcon.classList.add('fa-spinner', 'fa-spin');
+            onlinePlayPauseIcon.classList.remove('fa-play', 'fa-pause');
+            
+            try {
+                // Get audio URL
+                const quality = qualitySelect.value;
+                const audioUrl = await getOnlineAudioUrl(song.id, quality);
+                currentOnlineAudioUrl = audioUrl;
+                
+                // Load audio
+                onlineAudioPlayer.src = audioUrl;
+                
+                // Reset progress
+                onlineProgress.style.width = '0%';
+                onlineCurrentTimeEl.textContent = '0:00';
+                onlineDurationEl.textContent = song.duration || '0:00';
+                
+                // Update active item
+                updateOnlineActivePlaylistItem();
+                
+                // Remove loading state
+                onlineSongTitle.textContent = song.title;
+                onlinePlayPauseIcon.classList.remove('fa-spinner', 'fa-spin');
+                onlinePlayPauseIcon.classList.add('fa-play');
+                onlinePlayerStatus.textContent = `Ready: ${song.title}`;
+                
+            } catch (error) {
+                console.error("Load online song error:", error);
+                showOnlineMessage("Failed to load song. Trying next...", 'error');
+                playOnlineNextSong();
+            }
+        }
+
+        // Handle online audio can play
+        function handleOnlineAudioCanPlay() {
+            if (onlineAudioPlayer.duration && onlineAudioPlayer.duration > 0) {
+                onlineDurationEl.textContent = formatTime(onlineAudioPlayer.duration);
+            }
+        }
+
+        // Toggle online play/pause
+        function toggleOnlinePlayPause() {
+            if (isOnlinePlaying) {
+                pauseOnlineSong();
+            } else {
+                playOnlineSong();
+            }
+        }
+
+        // Play online song
+        function playOnlineSong() {
+            if (onlineMusicLibrary.length === 0) {
+                showOnlineMessage("No songs available. Search for music first.", 'error');
+                return;
+            }
+            
+            // If no song is loaded, load the first one
+            if (!onlineAudioPlayer.src || onlineAudioPlayer.src === '') {
+                loadOnlineSong(0);
+                return;
+            }
+            
+            onlineAudioPlayer.play().then(() => {
+                isOnlinePlaying = true;
+                onlinePlayPauseIcon.classList.remove('fa-play');
+                onlinePlayPauseIcon.classList.add('fa-pause');
+                startOnlineProgressTimer();
+            }).catch(e => {
+                console.error("Online play error:", e);
+                showOnlineMessage("Click play again to start", 'error');
+            });
+        }
+
+        // Pause online song
+        function pauseOnlineSong() {
+            isOnlinePlaying = false;
+            onlinePlayPauseIcon.classList.remove('fa-pause');
+            onlinePlayPauseIcon.classList.add('fa-play');
+            stopOnlineProgressTimer();
+            onlineAudioPlayer.pause();
+        }
+
+        // Play previous online song
+        function playOnlinePrevSong() {
+            let prevIndex = onlineCurrentSongIndex - 1;
+            if (prevIndex < 0) prevIndex = onlineMusicLibrary.length - 1;
+            
+            loadOnlineSong(prevIndex);
+            if (isOnlinePlaying) playOnlineSong();
+        }
+
+        // Play next online song
+        function playOnlineNextSong() {
+            let nextIndex = onlineCurrentSongIndex + 1;
+            if (nextIndex >= onlineMusicLibrary.length) nextIndex = 0;
+            
+            loadOnlineSong(nextIndex);
+            if (isOnlinePlaying) playOnlineSong();
+        }
+
+        // Update online progress
+        function updateOnlineProgress() {
+            const { currentTime, duration } = onlineAudioPlayer;
+            if (duration > 0) {
+                const progressPercent = (currentTime / duration) * 100;
+                onlineProgress.style.width = `${progressPercent}%`;
+                
+                onlineCurrentTimeEl.textContent = formatTime(currentTime);
+            }
+        }
+
+        // Update online duration
+        function updateOnlineDuration() {
+            if (onlineAudioPlayer.duration && onlineAudioPlayer.duration > 0) {
+                onlineDurationEl.textContent = formatTime(onlineAudioPlayer.duration);
+            }
+        }
+
+        // Set online progress
+        function setOnlineProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = onlineAudioPlayer.duration;
+            
+            if (duration > 0) {
+                onlineAudioPlayer.currentTime = (clickX / width) * duration;
+            }
+        }
+
+        // Set online volume
+        function setOnlineVolume() {
+            onlineAudioPlayer.volume = onlineVolumeSlider.value / 100;
+        }
+
+        // Start online progress timer
+        function startOnlineProgressTimer() {
+            stopOnlineProgressTimer();
+            onlineProgressInterval = setInterval(updateOnlineProgress, 1000);
+        }
+
+        // Stop online progress timer
+        function stopOnlineProgressTimer() {
+            if (onlineProgressInterval) {
+                clearInterval(onlineProgressInterval);
+                onlineProgressInterval = null;
+            }
+        }
+
+        // Handle online audio error
+        function handleOnlineAudioError(e) {
+            console.error("Online audio error:", e);
+            showOnlineMessage("Error playing song. Trying next...", 'error');
+            setTimeout(() => playOnlineNextSong(), 2000);
+        }
+
+        // Update online active playlist item
+        function updateOnlineActivePlaylistItem() {
+            document.querySelectorAll('#online-playlist .playlist-item').forEach((item, index) => {
+                if (index === onlineCurrentSongIndex) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Show online message
+        function showOnlineMessage(message, type = 'info') {
+            // Remove existing messages
+            const existingMsg = document.querySelector('#online-tab .message');
+            if (existingMsg) existingMsg.remove();
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${type}`;
+            messageEl.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+            
+            onlinePlaylistContainer.insertBefore(messageEl, onlinePlaylist);
+            
+            setTimeout(() => {
+                if (messageEl.parentNode) {
+                    messageEl.remove();
+                }
+            }, 3000);
+        }
+
+        // ==================== COMMON FUNCTIONS ====================
+        
+        // Format time (seconds to mm:ss)
+        function formatTime(seconds) {
+            if (isNaN(seconds) || seconds === Infinity) return "0:00";
+            
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        // Format seconds to MM:SS
+        function formatSeconds(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        // ==================== TAB MANAGEMENT ====================
+        
+        // Initialize tabs
+        function initTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    // Update active button
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Show active tab content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-tab`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+
+        // ==================== INITIALIZE APP ====================
+        
+        // Initialize everything when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            initTabs();
+            initLocalPlayer();
+            initOnlinePlayer();
+            
+            console.log("MelodyStream Music Player fully initialized!");
+        });
     </script>
 </body>
-                </html>
+    </html>
