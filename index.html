@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Melo Pro - Music Player</title>
+    <title>Melo - Music Player</title>
+    <link rel="manifest" href="app.webmanifest">
     <style>
         * {
             margin: 0;
@@ -19,7 +20,6 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --info: #3b82f6;
             --bg: #0f172a;
             --bg-card: #1e293b;
             --bg-player: rgba(15, 23, 42, 0.95);
@@ -32,52 +32,15 @@
             --bottom-bar: 60px;
         }
 
-        .theme-light {
-            --bg: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-player: rgba(255, 255, 255, 0.95);
-            --text: #1e293b;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-        }
-
-        .theme-dark {
-            --bg: #0f172a;
-            --bg-card: #1e293b;
-            --bg-player: rgba(15, 23, 42, 0.95);
-            --text: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
-        .theme-blue {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --bg: #1e3a8a;
-            --bg-card: #1e40af;
-            --text: #dbeafe;
-            --text-secondary: #93c5fd;
-            --border: rgba(59, 130, 246, 0.3);
-        }
-
-        .theme-purple {
-            --primary: #8b5cf6;
-            --primary-dark: #7c3aed;
-            --bg: #4c1d95;
-            --bg-card: #5b21b6;
-            --text: #ede9fe;
-            --text-secondary: #c4b5fd;
-            --border: rgba(139, 92, 246, 0.3);
-        }
-
-        .theme-green {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --bg: #064e3b;
-            --bg-card: #065f46;
-            --text: #d1fae5;
-            --text-secondary: #a7f3d0;
-            --border: rgba(16, 185, 129, 0.3);
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #f8fafc;
+                --bg-card: #ffffff;
+                --bg-player: rgba(255, 255, 255, 0.95);
+                --text: #1e293b;
+                --text-secondary: #64748b;
+                --border: #e2e8f0;
+            }
         }
 
         body {
@@ -91,11 +54,6 @@
             width: 100%;
             -webkit-font-smoothing: antialiased;
             touch-action: manipulation;
-            transition: background-color 0.3s ease;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
         }
 
         /* App Container */
@@ -104,14 +62,12 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
         }
 
-        /* Status Bar */
+        /* Status Bar (for mobile) */
         .status-bar {
             height: env(safe-area-inset-top, 0px);
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--bg);
             position: fixed;
             top: 0;
             left: 0;
@@ -122,7 +78,7 @@
         /* Header */
         .header {
             padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--bg);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -131,7 +87,6 @@
             top: 0;
             z-index: 100;
             height: 56px;
-            backdrop-filter: blur(10px);
         }
 
         .header-title {
@@ -152,7 +107,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -174,7 +129,7 @@
             overflow-y: auto;
             padding-bottom: calc(var(--player-height) + var(--bottom-bar) + 20px);
             -webkit-overflow-scrolling: touch;
-            padding-top: 56px;
+            padding-top: 56px; /* Header height */
         }
 
         /* Welcome Screen */
@@ -205,7 +160,23 @@
             color: white;
         }
 
-        /* Permission Card */
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 16px;
+            max-width: 320px;
+        }
+
         .permission-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -215,6 +186,32 @@
             box-shadow: var(--shadow);
             max-width: 400px;
             width: 100%;
+        }
+
+        .permission-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .permission-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .permission-text {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .permission-btn {
@@ -240,10 +237,45 @@
             box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
         }
 
+        .permission-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .feature-item i {
+            color: var(--success);
+            font-size: 16px;
+        }
+
         /* Library Screen */
         .library-screen {
             display: none;
             height: 100%;
+        }
+
+        .library-header {
+            padding: 16px;
+            background: var(--bg);
+        }
+
+        .library-stats {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 8px;
         }
 
         .library-content {
@@ -313,6 +345,138 @@
             border-color: var(--primary);
         }
 
+        .song-art {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .song-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .song-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-artist {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-duration {
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .song-menu {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Albums Grid */
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .album-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .album-art {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 30px;
+        }
+
+        .album-info {
+            padding: 12px;
+        }
+
+        .album-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .album-artist {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Artists List */
+        .artists-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .artist-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .artist-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin: 0 auto 12px;
+        }
+
+        .artist-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .artist-songs {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         /* Now Playing Screen */
         .now-playing-screen {
             position: fixed;
@@ -324,8 +488,6 @@
             z-index: 1000;
             display: none;
             flex-direction: column;
-            background-size: cover;
-            background-position: center;
         }
 
         .np-header {
@@ -335,8 +497,7 @@
             justify-content: space-between;
             position: sticky;
             top: 0;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            background: var(--bg);
             z-index: 10;
         }
 
@@ -344,7 +505,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border: none;
             color: var(--text);
             font-size: 20px;
@@ -385,6 +546,63 @@
             object-fit: cover;
         }
 
+        .np-info {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .np-song-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .np-song-artist {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .np-song-album {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .np-progress {
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 30px;
+        }
+
+        .np-progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-bottom: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .np-progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+
+        .np-time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         .np-controls {
             display: flex;
             align-items: center;
@@ -397,7 +615,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border: none;
             color: var(--text);
             font-size: 20px;
@@ -421,304 +639,13 @@
             font-size: 28px;
         }
 
-        /* Queue Screen */
-        .queue-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-
-        .queue-header {
-            padding: 16px;
+        .np-extra-controls {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .queue-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-        }
-
-        .queue-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: var(--bg-card);
-            border-radius: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .queue-item.playing {
-            background: rgba(124, 58, 237, 0.2);
-            border: 1px solid var(--primary);
-        }
-
-        /* Sleep Timer Screen */
-        .timer-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-
-        .timer-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-        }
-
-        .timer-display {
-            font-size: 48px;
-            font-weight: 700;
-            margin: 30px 0;
-            color: var(--primary);
-        }
-
-        .timer-presets {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-
-        .timer-preset {
-            padding: 15px 25px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 100px;
-        }
-
-        .timer-preset.active {
-            background: rgba(124, 58, 237, 0.3);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        /* Equalizer Screen */
-        .equalizer-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-
-        .eq-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .eq-sliders {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 10px;
-            height: 200px;
-            margin: 30px 0;
-        }
-
-        .eq-slider-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .eq-slider {
-            width: 30px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .eq-slider-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, var(--primary), var(--secondary));
-            border-radius: 15px;
-            transition: height 0.3s ease;
-        }
-
-        /* Settings Screen */
-        .settings-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-
-        .settings-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .settings-section {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .settings-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Theme Selector */
-        .theme-selector {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .theme-option {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .theme-option.active {
-            border-color: var(--text);
-            transform: scale(1.1);
-        }
-
-        /* Wallpaper Selector */
-        .wallpaper-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .wallpaper-option {
+            gap: 20px;
             width: 100%;
-            height: 80px;
-            border-radius: 12px;
-            background-size: cover;
-            background-position: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .wallpaper-option.active {
-            border-color: var(--primary);
-            transform: scale(1.05);
-        }
-
-        .wallpaper-option.custom {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            font-size: 24px;
-        }
-
-        /* Switch Toggle */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
+            max-width: 320px;
         }
 
         /* Music Player Bar */
@@ -737,6 +664,41 @@
             z-index: 100;
         }
 
+        .player-album {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .player-info {
+            margin-left: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-song-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-song-artist {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .player-controls {
             display: flex;
             align-items: center;
@@ -747,7 +709,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border: none;
             color: var(--text);
             font-size: 18px;
@@ -803,29 +765,80 @@
             color: var(--primary);
         }
 
-        /* Modal */
-        .modal {
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        /* Scanning Screen */
+        .scanning-screen {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: var(--bg);
+            z-index: 2000;
             display: none;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 3000;
-            backdrop-filter: blur(5px);
+            text-align: center;
+            padding: 20px;
         }
 
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            padding: 24px;
-            max-width: 400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+        .scanning-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .scanning-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .scanning-text {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            max-width: 300px;
+        }
+
+        .scanning-progress {
+            width: 100%;
+            max-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .scanning-progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .scanning-stats {
+            font-size: 14px;
+            color: var(--text-secondary);
         }
 
         /* Toast Notification */
@@ -850,6 +863,16 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        .toast-icon {
+            font-size: 20px;
+            color: var(--success);
+        }
+
+        .toast-message {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
         /* Empty State */
         .empty-state {
             padding: 60px 20px;
@@ -857,18 +880,70 @@
             color: var(--text-secondary);
         }
 
-        /* Responsive */
+        .empty-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Swipe Gesture Indicator */
+        .swipe-hint {
+            position: fixed;
+            bottom: calc(var(--bottom-bar) + var(--player-height) + 20px);
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            padding: 10px;
+            animation: fadeInOut 3s infinite;
+            z-index: 90;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Responsive Design */
         @media (min-width: 768px) {
             .app-container {
                 max-width: 768px;
                 margin: 0 auto;
+                border-left: 1px solid var(--border);
+                border-right: 1px solid var(--border);
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            .music-player, .bottom-nav {
+                background: rgba(15, 23, 42, 0.9);
+            }
+        }
+
+        /* iOS Safari Specific */
+        @supports (-webkit-touch-callout: none) {
+            .main-content {
+                padding-bottom: calc(var(--player-height) + var(--bottom-bar) + env(safe-area-inset-bottom) + 20px);
+            }
+            .bottom-nav {
+                padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+            }
+        }
+
+        /* Android Chrome Specific */
+        @supports (height: 100dvh) {
+            body, .app-container {
+                height: 100dvh;
             }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
 </head>
 <body>
-    <!-- Status Bar -->
+    <!-- Status Bar (for mobile) -->
     <div class="status-bar"></div>
 
     <div class="app-container">
@@ -877,27 +952,57 @@
             <div class="welcome-logo">
                 <i class="fas fa-music"></i>
             </div>
-            <h1 class="header-title">Melo Pro</h1>
-            <p style="color: var(--text-secondary); margin-bottom: 30px;">Complete Music Player with All Features</p>
+            <h1 class="welcome-title">Melo</h1>
+            <p class="welcome-subtitle">Your personal music player. Listen offline, anywhere.</p>
             
             <div class="permission-card">
+                <div class="permission-header">
+                    <div class="permission-icon">
+                        <i class="fas fa-folder-music"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom: 5px;">Access Your Music</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;">Scan and play music from your device</p>
+                    </div>
+                </div>
+                
+                <p class="permission-text">
+                    Melo needs permission to access your device storage to automatically scan and import all your music files. This allows you to play your entire music collection offline.
+                </p>
+                
                 <button class="permission-btn" id="grantPermissionBtn">
                     <i class="fas fa-check-circle"></i>
-                    Start Using Melo Pro
+                    Grant Storage Access
                 </button>
                 
-                <div style="margin-top: 25px;">
-                    <h3 style="margin-bottom: 15px; font-size: 16px;">Features:</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left;">
-                        <div><i class="fas fa-check" style="color: var(--success); margin-right: 8px;"></i> Working Queue</div>
-                        <div><i class="fas fa-check" style="color: var(--success); margin-right: 8px;"></i> Sleep Timer</div>
-                        <div><i class="fas fa-check" style="color: var(--success); margin-right: 8px;"></i> Equalizer</div>
-                        <div><i class="fas fa-check" style="color: var(--success); margin-right: 8px;"></i> Themes</div>
-                        <div><i class="fas fa-check" style="color: var(--success); margin-right: 8px;"></i> Wallpapers</div>
-                        <div><i class="fas fa-check" style="color: var(--success); margin-right: 8px;"></i> Dark/Light Mode</div>
+                <button class="permission-btn secondary" id="selectFilesBtn">
+                    <i class="fas fa-folder-open"></i>
+                    Select Music Files
+                </button>
+                
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>Automatic music scanning</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>Offline playback</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>Create playlists</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <span>Sleep timer</span>
                     </div>
                 </div>
             </div>
+            
+            <p style="margin-top: 20px; font-size: 12px; color: var(--text-secondary); max-width: 320px;">
+                Your music files are processed locally and never leave your device. No internet required.
+            </p>
         </div>
 
         <!-- Library Screen -->
@@ -905,8 +1010,11 @@
             <div class="header">
                 <h2 class="header-title">Library</h2>
                 <div class="header-actions">
-                    <button class="icon-btn" id="settingsBtn">
-                        <i class="fas fa-cog"></i>
+                    <button class="icon-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" id="refreshBtn">
+                        <i class="fas fa-redo"></i>
                     </button>
                 </div>
             </div>
@@ -914,12 +1022,13 @@
             <div class="library-content">
                 <div class="tabs" id="tabs">
                     <div class="tab active" data-tab="songs">Songs</div>
-                    <div class="tab" data-tab="queue">Queue</div>
+                    <div class="tab" data-tab="albums">Albums</div>
+                    <div class="tab" data-tab="artists">Artists</div>
                     <div class="tab" data-tab="playlists">Playlists</div>
                 </div>
                 
                 <div class="tab-content" id="tabContent">
-                    <!-- Songs will be loaded here -->
+                    <!-- Content will be loaded dynamically -->
                 </div>
             </div>
         </div>
@@ -958,255 +1067,54 @@
                 </div>
                 
                 <div class="np-controls">
-                    <button class="np-control-btn" id="npShuffleBtn" title="Shuffle">
+                    <button class="np-control-btn" id="npShuffleBtn">
                         <i class="fas fa-random"></i>
                     </button>
-                    <button class="np-control-btn" id="npPrevBtn" title="Previous">
+                    <button class="np-control-btn" id="npPrevBtn">
                         <i class="fas fa-step-backward"></i>
                     </button>
-                    <button class="np-control-btn np-play-btn" id="npPlayBtn" title="Play/Pause">
+                    <button class="np-control-btn np-play-btn" id="npPlayBtn">
                         <i class="fas fa-play"></i>
                     </button>
-                    <button class="np-control-btn" id="npNextBtn" title="Next">
+                    <button class="np-control-btn" id="npNextBtn">
                         <i class="fas fa-step-forward"></i>
                     </button>
-                    <button class="np-control-btn" id="npRepeatBtn" title="Repeat">
+                    <button class="np-control-btn" id="npRepeatBtn">
                         <i class="fas fa-redo"></i>
                     </button>
                 </div>
                 
                 <div class="np-extra-controls">
-                    <button class="icon-btn" id="npQueueBtn" title="Queue">
-                        <i class="fas fa-list-ol"></i>
-                    </button>
-                    <button class="icon-btn" id="npLikeBtn" title="Like">
+                    <button class="icon-btn" id="npLikeBtn">
                         <i class="far fa-heart"></i>
                     </button>
-                    <button class="icon-btn" id="npTimerBtn" title="Sleep Timer">
+                    <button class="icon-btn" id="npQueueBtn">
+                        <i class="fas fa-list-ol"></i>
+                    </button>
+                    <button class="icon-btn" id="npTimerBtn">
                         <i class="fas fa-clock"></i>
                     </button>
-                    <button class="icon-btn" id="npEqualizerBtn" title="Equalizer">
+                    <button class="icon-btn" id="npEqualizerBtn">
                         <i class="fas fa-sliders-h"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Queue Screen -->
-        <div class="queue-screen" id="queueScreen">
-            <div class="queue-header">
-                <button class="np-back-btn" id="queueBackBtn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <h3>Queue</h3>
-                <button class="icon-btn" id="clearQueueBtn">
-                    <i class="fas fa-trash"></i>
-                </button>
+        <!-- Scanning Screen -->
+        <div class="scanning-screen" id="scanningScreen">
+            <div class="scanning-icon">
+                <i class="fas fa-music"></i>
             </div>
-            <div class="queue-content" id="queueContent">
-                <!-- Queue items will be loaded here -->
+            <h2 class="scanning-title">Scanning Your Music</h2>
+            <p class="scanning-text" id="scanningText">
+                Searching for music files on your device...
+            </p>
+            <div class="scanning-progress">
+                <div class="scanning-progress-fill" id="scanningProgress"></div>
             </div>
-        </div>
-
-        <!-- Sleep Timer Screen -->
-        <div class="timer-screen" id="timerScreen">
-            <div class="queue-header">
-                <button class="np-back-btn" id="timerBackBtn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <h3>Sleep Timer</h3>
-            </div>
-            <div class="timer-container">
-                <div class="timer-display" id="timerDisplay">00:00</div>
-                <div class="timer-presets">
-                    <div class="timer-preset" data-minutes="5">5 min</div>
-                    <div class="timer-preset" data-minutes="10">10 min</div>
-                    <div class="timer-preset" data-minutes="15">15 min</div>
-                    <div class="timer-preset" data-minutes="30">30 min</div>
-                    <div class="timer-preset" data-minutes="45">45 min</div>
-                    <div class="timer-preset" data-minutes="60">60 min</div>
-                </div>
-                <div style="display: flex; gap: 20px; margin-top: 30px;">
-                    <button class="permission-btn" id="startTimerBtn" style="width: auto; padding: 12px 30px;">
-                        Start Timer
-                    </button>
-                    <button class="permission-btn" id="cancelTimerBtn" style="width: auto; padding: 12px 30px; background: var(--danger); display: none;">
-                        Cancel Timer
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Equalizer Screen -->
-        <div class="equalizer-screen" id="equalizerScreen">
-            <div class="queue-header">
-                <button class="np-back-btn" id="eqBackBtn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <h3>Equalizer</h3>
-                <button class="icon-btn" id="resetEqBtn">
-                    <i class="fas fa-undo"></i>
-                </button>
-            </div>
-            <div class="eq-container">
-                <div style="margin-bottom: 30px; text-align: center;">
-                    <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
-                        <button class="timer-preset" data-preset="flat">Flat</button>
-                        <button class="timer-preset" data-preset="pop">Pop</button>
-                        <button class="timer-preset" data-preset="rock">Rock</button>
-                        <button class="timer-preset" data-preset="jazz">Jazz</button>
-                        <button class="timer-preset" data-preset="classical">Classical</button>
-                    </div>
-                </div>
-                
-                <div class="eq-sliders" id="eqSliders">
-                    <!-- EQ sliders will be loaded here -->
-                </div>
-                
-                <div style="margin-top: 30px; display: flex; gap: 20px;">
-                    <button class="icon-btn" id="eqToggleBtn">
-                        <i class="fas fa-power-off"></i>
-                    </button>
-                    <div style="color: var(--text-secondary); font-size: 14px;">
-                        Equalizer: <span id="eqStatus">Off</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Screen -->
-        <div class="settings-screen" id="settingsScreen">
-            <div class="queue-header">
-                <button class="np-back-btn" id="settingsBackBtn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <h3>Settings</h3>
-            </div>
-            <div class="settings-content">
-                <!-- Theme Settings -->
-                <div class="settings-section">
-                    <h4 class="settings-title">Appearance</h4>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Dark/Light Mode</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Switch between dark and light themes</div>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="darkModeToggle">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Theme Color</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Choose app theme color</div>
-                        </div>
-                    </div>
-                    
-                    <div class="theme-selector">
-                        <div class="theme-option active" data-theme="default" style="background: linear-gradient(135deg, #7c3aed, #0ea5e9);"></div>
-                        <div class="theme-option" data-theme="blue" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);"></div>
-                        <div class="theme-option" data-theme="purple" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);"></div>
-                        <div class="theme-option" data-theme="green" style="background: linear-gradient(135deg, #10b981, #34d399);"></div>
-                    </div>
-                </div>
-                
-                <!-- Background Settings -->
-                <div class="settings-section">
-                    <h4 class="settings-title">Background</h4>
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Background Image</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Change app background</div>
-                        </div>
-                    </div>
-                    
-                    <div class="wallpaper-grid">
-                        <div class="wallpaper-option active" data-wallpaper="none" style="background: var(--bg);">
-                            <i class="fas fa-ban" style="color: var(--text-secondary);"></i>
-                        </div>
-                        <div class="wallpaper-option" data-wallpaper="gradient1" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-                        <div class="wallpaper-option" data-wallpaper="gradient2" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
-                        <div class="wallpaper-option" data-wallpaper="gradient3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
-                        <div class="wallpaper-option" data-wallpaper="gradient4" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
-                        <div class="wallpaper-option custom" data-wallpaper="custom" style="background: rgba(255, 255, 255, 0.1);">
-                            <i class="fas fa-image"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Blur Intensity</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Adjust background blur</div>
-                        </div>
-                        <input type="range" id="blurSlider" min="0" max="20" value="5" style="width: 100px;">
-                    </div>
-                </div>
-                
-                <!-- Audio Settings -->
-                <div class="settings-section">
-                    <h4 class="settings-title">Audio</h4>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Crossfade</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Smooth transition between songs</div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span id="crossfadeValue">0s</span>
-                            <input type="range" id="crossfadeSlider" min="0" max="10" value="0" style="width: 80px;">
-                        </div>
-                    </div>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Gapless Playback</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Remove gaps between tracks</div>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="gaplessToggle" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Volume Boost</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Increase maximum volume</div>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="volumeBoostToggle">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Storage Settings -->
-                <div class="settings-section">
-                    <h4 class="settings-title">Storage</h4>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Scan for Music</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Rescan device for music files</div>
-                        </div>
-                        <button class="icon-btn" id="rescanBtn" style="width: auto; padding: 8px 16px; font-size: 14px;">
-                            <i class="fas fa-redo"></i> Scan
-                        </button>
-                    </div>
-                    
-                    <div class="settings-item">
-                        <div>
-                            <div style="font-weight: 500;">Clear Cache</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Clear temporary files</div>
-                        </div>
-                        <button class="icon-btn" id="clearCacheBtn" style="width: auto; padding: 8px 16px; font-size: 14px; background: var(--danger);">
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
-                    </div>
-                </div>
+            <div class="scanning-stats" id="scanningStats">
+                0 files found
             </div>
         </div>
 
@@ -1242,9 +1150,13 @@
                 <i class="fas fa-play-circle nav-icon"></i>
                 <span>Now Playing</span>
             </a>
-            <a href="#" class="nav-item" data-page="queue">
-                <i class="fas fa-list-ol nav-icon"></i>
-                <span>Queue</span>
+            <a href="#" class="nav-item" data-page="search">
+                <i class="fas fa-search nav-icon"></i>
+                <span>Search</span>
+            </a>
+            <a href="#" class="nav-item" data-page="playlists">
+                <i class="fas fa-list nav-icon"></i>
+                <span>Playlists</span>
             </a>
             <a href="#" class="nav-item" data-page="settings">
                 <i class="fas fa-cog nav-icon"></i>
@@ -1260,226 +1172,120 @@
     </div>
 
     <script>
-        // Complete App State
+        // App State
         const appState = {
-            // Music Data
-            songs: [
-                {
-                    id: 1,
-                    name: "Blinding Lights",
-                    artist: "The Weeknd",
-                    album: "After Hours",
-                    duration: "3:22",
-                    color: "#ef4444",
-                    liked: true
-                },
-                {
-                    id: 2,
-                    name: "Levitating",
-                    artist: "Dua Lipa",
-                    album: "Future Nostalgia",
-                    duration: "3:24",
-                    color: "#8b5cf6",
-                    liked: false
-                },
-                {
-                    id: 3,
-                    name: "Stay",
-                    artist: "The Kid LAROI, Justin Bieber",
-                    album: "F*CK LOVE 3",
-                    duration: "2:21",
-                    color: "#0ea5e9",
-                    liked: true
-                },
-                {
-                    id: 4,
-                    name: "Good 4 U",
-                    artist: "Olivia Rodrigo",
-                    album: "SOUR",
-                    duration: "2:58",
-                    color: "#10b981",
-                    liked: false
-                },
-                {
-                    id: 5,
-                    name: "Heat Waves",
-                    artist: "Glass Animals",
-                    album: "Dreamland",
-                    duration: "3:59",
-                    color: "#f59e0b",
-                    liked: true
-                }
-            ],
-            queue: [],
+            songs: [],
+            albums: {},
+            artists: {},
             currentSongIndex: -1,
             isPlaying: false,
             audioPlayer: new Audio(),
-            
-            // Playback Settings
+            hasPermission: false,
             volume: 0.7,
-            repeatMode: 'none', // none, one, all
+            repeatMode: 'none',
             shuffleMode: false,
-            
-            // Equalizer Settings
-            equalizer: {
-                enabled: false,
-                preset: 'flat',
-                gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            },
-            
-            // Sleep Timer
-            sleepTimer: {
-                active: false,
-                endTime: null,
-                duration: 0,
-                timerId: null
-            },
-            
-            // App Settings
-            settings: {
-                theme: 'default',
-                darkMode: true,
-                wallpaper: 'none',
-                blurIntensity: 5,
-                crossfade: 0,
-                gapless: true,
-                volumeBoost: false
-            },
-            
-            // UI State
-            currentScreen: 'welcome',
-            currentTab: 'songs'
+            likedSongs: new Set(),
+            currentTab: 'songs',
+            isScanning: false,
+            scanProgress: 0,
+            totalFiles: 0,
+            scannedFiles: 0
         };
 
         // DOM Elements
         const welcomeScreen = document.getElementById('welcomeScreen');
         const libraryScreen = document.getElementById('libraryScreen');
         const nowPlayingScreen = document.getElementById('nowPlayingScreen');
-        const queueScreen = document.getElementById('queueScreen');
-        const timerScreen = document.getElementById('timerScreen');
-        const equalizerScreen = document.getElementById('equalizerScreen');
-        const settingsScreen = document.getElementById('settingsScreen');
+        const scanningScreen = document.getElementById('scanningScreen');
         const musicPlayer = document.getElementById('musicPlayer');
         const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const grantPermissionBtn = document.getElementById('grantPermissionBtn');
+        const selectFilesBtn = document.getElementById('selectFilesBtn');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContent = document.getElementById('tabContent');
+        const scanningProgress = document.getElementById('scanningProgress');
+        const scanningText = document.getElementById('scanningText');
+        const scanningStats = document.getElementById('scanningStats');
 
         // Initialize App
         function initApp() {
-            loadSettings();
+            // Check if already has permission
+            const savedState = localStorage.getItem('meloAppState');
+            if (savedState) {
+                const parsed = JSON.parse(savedState);
+                appState.songs = parsed.songs || [];
+                appState.hasPermission = parsed.hasPermission || false;
+                appState.likedSongs = new Set(parsed.likedSongs || []);
+                
+                if (appState.songs.length > 0) {
+                    showLibrary();
+                    organizeMusicData();
+                    updateLibraryStats();
+                }
+            }
+            
             setupEventListeners();
             setupAudioPlayer();
-            initializeQueue();
-            initializeEqualizer();
-            updateUI();
-            
-            // Show welcome screen
-            showScreen('welcome');
-        }
-
-        // Load Settings from localStorage
-        function loadSettings() {
-            const saved = localStorage.getItem('meloProSettings');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                Object.assign(appState.settings, parsed);
-                
-                // Apply settings
-                applyTheme(appState.settings.theme);
-                applyDarkMode(appState.settings.darkMode);
-                applyWallpaper(appState.settings.wallpaper);
-                applyBlur(appState.settings.blurIntensity);
-            }
-        }
-
-        // Save Settings to localStorage
-        function saveSettings() {
-            localStorage.setItem('meloProSettings', JSON.stringify(appState.settings));
+            setupSwipeGestures();
         }
 
         // Setup Event Listeners
         function setupEventListeners() {
-            // Navigation
-            document.getElementById('grantPermissionBtn').addEventListener('click', () => {
-                showScreen('library');
-            });
-            
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const page = item.dataset.page;
-                    
-                    // Update active nav
-                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    // Handle different pages
-                    if (page === 'now-playing' && appState.currentSongIndex !== -1) {
-                        showScreen('now-playing');
-                    } else if (page === 'queue') {
-                        showScreen('queue');
-                    } else if (page === 'settings') {
-                        showScreen('settings');
-                    } else {
-                        showScreen('library');
-                    }
-                });
-            });
-            
-            // Back buttons
-            document.getElementById('npBackBtn').addEventListener('click', () => showScreen('library'));
-            document.getElementById('queueBackBtn').addEventListener('click', () => showScreen('library'));
-            document.getElementById('timerBackBtn').addEventListener('click', () => showScreen('now-playing'));
-            document.getElementById('eqBackBtn').addEventListener('click', () => showScreen('now-playing'));
-            document.getElementById('settingsBackBtn').addEventListener('click', () => showScreen('library'));
-            
-            // Settings button
-            document.getElementById('settingsBtn').addEventListener('click', () => showScreen('settings'));
-            
-            // Player controls
-            setupPlayerControls();
-            
-            // Queue controls
-            document.getElementById('clearQueueBtn').addEventListener('click', clearQueue);
-            
-            // Timer controls
-            setupTimerControls();
-            
-            // Equalizer controls
-            setupEqualizerControls();
-            
-            // Settings controls
-            setupSettingsControls();
-            
-            // Now Playing controls
-            document.getElementById('npQueueBtn').addEventListener('click', () => showScreen('queue'));
-            document.getElementById('npTimerBtn').addEventListener('click', () => showScreen('timer'));
-            document.getElementById('npEqualizerBtn').addEventListener('click', () => showScreen('equalizer'));
-            document.getElementById('npLikeBtn').addEventListener('click', toggleLike);
+            // Permission buttons
+            grantPermissionBtn.addEventListener('click', requestStorageAccess);
+            selectFilesBtn.addEventListener('click', selectFilesManually);
             
             // Tabs
-            document.querySelectorAll('.tab').forEach(tab => {
+            tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.dataset.tab;
                     switchTab(tabName);
                 });
             });
-        }
-
-        // Setup Player Controls
-        function setupPlayerControls() {
-            const playBtns = ['playerPlayBtn', 'npPlayBtn'];
-            const prevBtns = ['playerPrevBtn', 'npPrevBtn'];
-            const nextBtns = ['playerNextBtn', 'npNextBtn'];
             
-            playBtns.forEach(id => {
-                document.getElementById(id).addEventListener('click', togglePlayPause);
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.dataset.page;
+                    
+                    // Update active state
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    if (page === 'now-playing' && appState.currentSongIndex !== -1) {
+                        showNowPlaying();
+                    } else if (page === 'library') {
+                        showLibrary();
+                    }
+                    // Other pages would be implemented similarly
+                });
             });
             
-            prevBtns.forEach(id => {
-                document.getElementById(id).addEventListener('click', playPrevious);
-            });
+            // Back buttons
+            document.getElementById('npBackBtn').addEventListener('click', hideNowPlaying);
             
-            nextBtns.forEach(id => {
-                document.getElementById(id).addEventListener('click', playNext);
+            // Player controls
+            document.getElementById('playerPlayBtn').addEventListener('click', togglePlay);
+            document.getElementById('playerPrevBtn').addEventListener('click', playPrevious);
+            document.getElementById('playerNextBtn').addEventListener('click', playNext);
+            document.getElementById('npPlayBtn').addEventListener('click', togglePlay);
+            document.getElementById('npPrevBtn').addEventListener('click', playPrevious);
+            document.getElementById('npNextBtn').addEventListener('click', playNext);
+            
+            // Progress bar
+            document.getElementById('npProgressBar').addEventListener('click', seekAudio);
+            
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', refreshLibrary);
+            
+            // Like button
+            document.getElementById('npLikeBtn').addEventListener('click', toggleLike);
+            
+            // Queue button (would show queue modal)
+            document.getElementById('npQueueBtn').addEventListener('click', () => {
+                showToast('Queue feature coming soon');
             });
             
             // Shuffle button
@@ -1488,115 +1294,34 @@
             // Repeat button
             document.getElementById('npRepeatBtn').addEventListener('click', toggleRepeat);
             
-            // Progress bar
-            document.getElementById('npProgressBar').addEventListener('click', seekAudio);
-        }
-
-        // Setup Timer Controls
-        function setupTimerControls() {
-            // Timer presets
-            document.querySelectorAll('.timer-preset').forEach(preset => {
-                preset.addEventListener('click', function() {
-                    if (this.closest('#timerScreen')) {
-                        const minutes = parseInt(this.dataset.minutes);
-                        setTimer(minutes);
-                    }
-                });
+            // Timer button
+            document.getElementById('npTimerBtn').addEventListener('click', () => {
+                showToast('Sleep timer coming soon');
             });
             
-            // Timer buttons
-            document.getElementById('startTimerBtn').addEventListener('click', startTimer);
-            document.getElementById('cancelTimerBtn').addEventListener('click', cancelTimer);
-        }
-
-        // Setup Equalizer Controls
-        function setupEqualizerControls() {
-            // EQ toggle
-            document.getElementById('eqToggleBtn').addEventListener('click', toggleEqualizer);
-            
-            // Reset EQ
-            document.getElementById('resetEqBtn').addEventListener('click', resetEqualizer);
-            
-            // Presets
-            document.querySelectorAll('.timer-preset[data-preset]').forEach(preset => {
-                preset.addEventListener('click', function() {
-                    const presetName = this.dataset.preset;
-                    loadEQPreset(presetName);
-                });
-            });
-        }
-
-        // Setup Settings Controls
-        function setupSettingsControls() {
-            // Dark mode toggle
-            document.getElementById('darkModeToggle').addEventListener('change', function() {
-                appState.settings.darkMode = this.checked;
-                applyDarkMode(this.checked);
-                saveSettings();
+            // Equalizer button
+            document.getElementById('npEqualizerBtn').addEventListener('click', () => {
+                showToast('Equalizer coming soon');
             });
             
-            // Theme selection
-            document.querySelectorAll('.theme-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const theme = this.dataset.theme;
-                    applyTheme(theme);
-                    appState.settings.theme = theme;
-                    saveSettings();
-                });
+            // Search button
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                showToast('Search coming soon');
             });
             
-            // Wallpaper selection
-            document.querySelectorAll('.wallpaper-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const wallpaper = this.dataset.wallpaper;
-                    if (wallpaper === 'custom') {
-                        selectCustomWallpaper();
-                    } else {
-                        applyWallpaper(wallpaper);
-                        appState.settings.wallpaper = wallpaper;
-                        saveSettings();
-                    }
-                });
-            });
-            
-            // Blur slider
-            document.getElementById('blurSlider').addEventListener('input', function() {
-                const value = parseInt(this.value);
-                applyBlur(value);
-                appState.settings.blurIntensity = value;
-                saveSettings();
-            });
-            
-            // Crossfade slider
-            document.getElementById('crossfadeSlider').addEventListener('input', function() {
-                const value = parseInt(this.value);
-                document.getElementById('crossfadeValue').textContent = value + 's';
-                appState.settings.crossfade = value;
-                saveSettings();
-            });
-            
-            // Gapless toggle
-            document.getElementById('gaplessToggle').addEventListener('change', function() {
-                appState.settings.gapless = this.checked;
-                saveSettings();
-            });
-            
-            // Volume boost toggle
-            document.getElementById('volumeBoostToggle').addEventListener('change', function() {
-                appState.settings.volumeBoost = this.checked;
-                if (this.checked) {
-                    appState.audioPlayer.volume = Math.min(1, appState.volume * 1.3);
-                } else {
-                    appState.audioPlayer.volume = appState.volume;
+            // Close scanning screen on tap
+            scanningScreen.addEventListener('click', () => {
+                if (!appState.isScanning) {
+                    hideScanningScreen();
                 }
-                saveSettings();
             });
             
-            // Rescan button
-            document.getElementById('rescanBtn').addEventListener('click', rescanMusic);
-            
-            // Clear cache button
-            document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
+            // Handle back button on mobile
+            window.addEventListener('popstate', () => {
+                if (nowPlayingScreen.style.display === 'flex') {
+                    hideNowPlaying();
+                }
+            });
         }
 
         // Setup Audio Player
@@ -1608,136 +1333,274 @@
             audio.addEventListener('loadedmetadata', updateSongInfo);
             audio.addEventListener('ended', handleSongEnd);
             audio.addEventListener('error', handleAudioError);
-            
-            // Simulate audio for demo
-            audio.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+            audio.addEventListener('play', () => {
+                appState.isPlaying = true;
+                updatePlayButtons();
+            });
+            audio.addEventListener('pause', () => {
+                appState.isPlaying = false;
+                updatePlayButtons();
+            });
         }
 
-        // Show Screen
-        function showScreen(screen) {
-            // Hide all screens
-            const screens = ['welcome', 'library', 'now-playing', 'queue', 'timer', 'equalizer', 'settings'];
-            screens.forEach(s => {
-                const element = document.getElementById(s + 'Screen');
-                if (element) element.style.display = 'none';
-            });
-            
-            // Show requested screen
-            const screenElement = document.getElementById(screen + 'Screen');
-            if (screenElement) {
-                screenElement.style.display = 'flex';
-                appState.currentScreen = screen;
+        // Request Storage Access (Automatic Scanning)
+        async function requestStorageAccess() {
+            try {
+                // Show scanning screen
+                showScanningScreen();
+                appState.isScanning = true;
                 
-                // Update UI for specific screens
-                if (screen === 'library') {
-                    renderLibrary();
-                } else if (screen === 'queue') {
-                    renderQueue();
-                } else if (screen === 'timer') {
-                    updateTimerDisplay();
-                } else if (screen === 'equalizer') {
-                    renderEqualizer();
-                } else if (screen === 'settings') {
-                    loadSettingsUI();
+                // Try to get directory handle (modern browsers)
+                if ('showDirectoryPicker' in window) {
+                    try {
+                        const directoryHandle = await window.showDirectoryPicker({
+                            id: 'music-library',
+                            mode: 'read',
+                            startIn: 'music'
+                        });
+                        
+                        await scanDirectory(directoryHandle);
+                    } catch (err) {
+                        console.log('Directory picker not available or cancelled:', err);
+                        // Fall back to file picker
+                        selectFilesManually();
+                    }
+                } else {
+                    // Fallback for browsers without directory picker
+                    showToast('Using file picker instead');
+                    selectFilesManually();
+                }
+            } catch (error) {
+                console.error('Error accessing storage:', error);
+                showToast('Could not access storage', 'error');
+                hideScanningScreen();
+            }
+        }
+
+        // Scan Directory Recursively
+        async function scanDirectory(directoryHandle) {
+            const audioExtensions = ['.mp3', '.m4a', '.wav', '.ogg', '.flac', '.aac', '.wma'];
+            let totalFiles = 0;
+            let processedFiles = 0;
+            
+            // First pass: count files
+            scanningText.textContent = 'Counting music files...';
+            await countFiles(directoryHandle);
+            
+            async function countFiles(dirHandle) {
+                for await (const entry of dirHandle.values()) {
+                    if (entry.kind === 'file') {
+                        const name = entry.name.toLowerCase();
+                        if (audioExtensions.some(ext => name.endsWith(ext))) {
+                            totalFiles++;
+                        }
+                    } else if (entry.kind === 'directory') {
+                        await countFiles(entry);
+                    }
                 }
             }
+            
+            appState.totalFiles = totalFiles;
+            scanningStats.textContent = `0/${totalFiles} files`;
+            
+            // Second pass: process files
+            scanningText.textContent = 'Importing music...';
+            await processDirectory(directoryHandle);
+            
+            async function processDirectory(dirHandle, path = '') {
+                for await (const entry of dirHandle.values()) {
+                    if (entry.kind === 'file') {
+                        const name = entry.name;
+                        const lowerName = name.toLowerCase();
+                        
+                        if (audioExtensions.some(ext => lowerName.endsWith(ext))) {
+                            try {
+                                const file = await entry.getFile();
+                                await processMusicFile(file, path);
+                                
+                                processedFiles++;
+                                appState.scannedFiles = processedFiles;
+                                
+                                // Update progress
+                                const progress = (processedFiles / totalFiles) * 100;
+                                scanningProgress.style.width = `${progress}%`;
+                                scanningStats.textContent = `${processedFiles}/${totalFiles} files`;
+                                
+                                // Update text every 10 files
+                                if (processedFiles % 10 === 0) {
+                                    scanningText.textContent = `Imported ${processedFiles} songs...`;
+                                }
+                            } catch (err) {
+                                console.warn('Error processing file:', name, err);
+                            }
+                        }
+                    } else if (entry.kind === 'directory') {
+                        await processDirectory(entry, path + entry.name + '/');
+                    }
+                }
+            }
+            
+            // Finish scanning
+            appState.isScanning = false;
+            appState.hasPermission = true;
+            
+            // Organize and save data
+            organizeMusicData();
+            saveAppState();
+            
+            // Show completion message
+            scanningText.textContent = `Import complete!`;
+            scanningStats.textContent = `${appState.songs.length} songs added to library`;
+            
+            // Hide scanning screen after delay
+            setTimeout(() => {
+                hideScanningScreen();
+                showLibrary();
+                showToast(`${appState.songs.length} songs imported successfully!`);
+            }, 1500);
         }
 
-        // Render Library
-        function renderLibrary() {
-            const tabContent = document.getElementById('tabContent');
+        // Select Files Manually (Fallback)
+        function selectFilesManually() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'audio/*';
+            fileInput.multiple = true;
+            fileInput.style.display = 'none';
             
-            if (appState.currentTab === 'songs') {
-                let html = '<div class="songs-list">';
+            fileInput.onchange = async (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) return;
                 
-                appState.songs.forEach((song, index) => {
-                    const isPlaying = index === appState.currentSongIndex;
-                    html += `
-                        <div class="song-item ${isPlaying ? 'playing' : ''}" data-index="${index}">
-                            <div class="song-art" style="background: linear-gradient(135deg, ${song.color}, ${adjustColor(song.color, -30)})">
-                                <i class="fas fa-music"></i>
-                            </div>
-                            <div class="song-info">
-                                <div class="song-name">${song.name}</div>
-                                <div class="song-artist">${song.artist}</div>
-                            </div>
-                            <div class="song-duration">${song.duration}</div>
-                            <div class="song-menu" onclick="toggleSongLike(${index})">
-                                <i class="${song.liked ? 'fas' : 'far'} fa-heart" style="color: ${song.liked ? 'var(--danger)' : ''}"></i>
-                            </div>
-                        </div>
-                    `;
+                showScanningScreen();
+                scanningText.textContent = 'Processing selected files...';
+                
+                for (let i = 0; i < files.length; i++) {
+                    await processMusicFile(files[i]);
+                    
+                    // Update progress
+                    const progress = ((i + 1) / files.length) * 100;
+                    scanningProgress.style.width = `${progress}%`;
+                    scanningStats.textContent = `${i + 1}/${files.length} files`;
+                }
+                
+                appState.hasPermission = true;
+                organizeMusicData();
+                saveAppState();
+                
+                setTimeout(() => {
+                    hideScanningScreen();
+                    showLibrary();
+                    showToast(`${files.length} songs added to library`);
+                }, 1000);
+            };
+            
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            document.body.removeChild(fileInput);
+        }
+
+        // Process Music File
+        async function processMusicFile(file, path = '') {
+            return new Promise((resolve) => {
+                const song = {
+                    id: Date.now() + Math.random(),
+                    name: extractFileName(file.name),
+                    artist: extractArtistFromName(file.name),
+                    album: extractAlbumFromPath(path),
+                    duration: '0:00',
+                    file: file,
+                    url: URL.createObjectURL(file),
+                    color: generateRandomColor(),
+                    path: path,
+                    fileSize: file.size,
+                    type: file.type,
+                    lastModified: file.lastModified,
+                    addedDate: Date.now()
+                };
+                
+                // Extract metadata
+                const audio = new Audio();
+                audio.src = song.url;
+                
+                audio.addEventListener('loadedmetadata', () => {
+                    song.duration = formatTime(audio.duration);
+                    song.durationSeconds = audio.duration;
+                    
+                    // Check for ID3 tags (simplified)
+                    extractBasicMetadata(song, file);
+                    
+                    appState.songs.push(song);
+                    resolve();
                 });
                 
-                html += '</div>';
-                tabContent.innerHTML = html;
-                
-                // Add click listeners
-                document.querySelectorAll('.song-item').forEach((item, index) => {
-                    item.addEventListener('click', () => playSong(index));
+                audio.addEventListener('error', () => {
+                    // If can't load metadata, still add song
+                    song.duration = '0:00';
+                    appState.songs.push(song);
+                    resolve();
                 });
-            } else if (appState.currentTab === 'queue') {
-                renderQueueContent();
+                
+                // Timeout for files that don't load metadata
+                setTimeout(() => {
+                    if (!song.durationSeconds) {
+                        song.duration = '0:00';
+                        appState.songs.push(song);
+                        resolve();
+                    }
+                }, 1000);
+            });
+        }
+
+        // Extract Basic Metadata
+        function extractBasicMetadata(song, file) {
+            // Simple extraction from filename
+            const nameParts = song.name.split(' - ');
+            if (nameParts.length >= 2) {
+                song.artist = nameParts[0].trim();
+                song.name = nameParts.slice(1).join(' - ').trim();
+            }
+            
+            // Try to get from path
+            const pathParts = song.path.split('/').filter(p => p);
+            if (pathParts.length > 0) {
+                song.album = pathParts[pathParts.length - 1];
             }
         }
 
-        // Initialize Queue
-        function initializeQueue() {
-            // Start with all songs in queue
-            appState.queue = [...appState.songs];
-        }
-
-        // Render Queue
-        function renderQueue() {
-            renderQueueContent();
-        }
-
-        // Render Queue Content
-        function renderQueueContent() {
-            const queueContent = document.getElementById('queueContent');
-            let html = '<div class="songs-list">';
+        // Organize Music Data
+        function organizeMusicData() {
+            // Group by album
+            appState.albums = {};
+            appState.artists = {};
             
-            appState.queue.forEach((song, index) => {
-                const isPlaying = appState.currentSongIndex === index;
-                html += `
-                    <div class="queue-item ${isPlaying ? 'playing' : ''}" data-index="${index}">
-                        <div class="song-art" style="background: linear-gradient(135deg, ${song.color}, ${adjustColor(song.color, -30)})">
-                            <i class="fas fa-music"></i>
-                        </div>
-                        <div class="song-info">
-                            <div class="song-name">${song.name}</div>
-                            <div class="song-artist">${song.artist}</div>
-                        </div>
-                        <div class="song-duration">${song.duration}</div>
-                        <div class="song-menu" onclick="removeFromQueue(${index})">
-                            <i class="fas fa-times"></i>
-                        </div>
-                    </div>
-                `;
+            appState.songs.forEach(song => {
+                // Albums
+                const albumKey = song.album || 'Unknown Album';
+                if (!appState.albums[albumKey]) {
+                    appState.albums[albumKey] = {
+                        name: albumKey,
+                        artist: song.artist,
+                        songs: [],
+                        color: song.color
+                    };
+                }
+                appState.albums[albumKey].songs.push(song);
+                
+                // Artists
+                const artistKey = song.artist || 'Unknown Artist';
+                if (!appState.artists[artistKey]) {
+                    appState.artists[artistKey] = {
+                        name: artistKey,
+                        songs: [],
+                        albums: new Set()
+                    };
+                }
+                appState.artists[artistKey].songs.push(song);
+                appState.artists[artistKey].albums.add(song.album);
             });
             
-            html += '</div>';
-            queueContent.innerHTML = html;
-            
-            // Add click listeners
-            document.querySelectorAll('.queue-item').forEach((item, index) => {
-                item.addEventListener('click', () => playSongFromQueue(index));
-            });
-        }
-
-        // Clear Queue
-        function clearQueue() {
-            appState.queue = [];
-            renderQueueContent();
-            showToast('Queue cleared');
-        }
-
-        // Remove from Queue
-        function removeFromQueue(index) {
-            event.stopPropagation();
-            appState.queue.splice(index, 1);
-            renderQueueContent();
-            showToast('Removed from queue');
+            updateLibraryStats();
         }
 
         // Play Song
@@ -1747,41 +1610,28 @@
             appState.currentSongIndex = index;
             const song = appState.songs[index];
             
-            // Update UI
+            // Update player UI
             updatePlayerUI(song);
             updateNowPlayingUI(song);
             
-            // Play audio
-            appState.audioPlayer.play();
-            appState.isPlaying = true;
-            updatePlayButtons();
+            // Set audio source
+            appState.audioPlayer.src = song.url;
+            
+            // Play
+            appState.audioPlayer.play().catch(e => {
+                console.error('Playback error:', e);
+                showToast('Error playing song', 'error');
+            });
             
             // Show player bar
             musicPlayer.style.display = 'flex';
             
             // Update like button
             updateLikeButton();
-            
-            // Show now playing if on library
-            if (appState.currentScreen === 'library') {
-                showScreen('now-playing');
-            }
-        }
-
-        // Play Song from Queue
-        function playSongFromQueue(index) {
-            if (index < 0 || index >= appState.queue.length) return;
-            
-            const song = appState.queue[index];
-            // Find song in main list
-            const mainIndex = appState.songs.findIndex(s => s.id === song.id);
-            if (mainIndex !== -1) {
-                playSong(mainIndex);
-            }
         }
 
         // Toggle Play/Pause
-        function togglePlayPause() {
+        function togglePlay() {
             if (appState.currentSongIndex === -1) {
                 if (appState.songs.length > 0) {
                     playSong(0);
@@ -1791,28 +1641,22 @@
             
             if (appState.isPlaying) {
                 appState.audioPlayer.pause();
-                appState.isPlaying = false;
             } else {
-                appState.audioPlayer.play();
-                appState.isPlaying = true;
+                appState.audioPlayer.play().catch(e => {
+                    console.error('Playback error:', e);
+                    showToast('Error playing song', 'error');
+                });
             }
-            
-            updatePlayButtons();
         }
 
         // Play Previous
         function playPrevious() {
             if (appState.songs.length === 0) return;
             
-            if (appState.shuffleMode) {
-                // Play random song
-                const randomIndex = Math.floor(Math.random() * appState.songs.length);
-                playSong(randomIndex);
-            } else {
-                let newIndex = appState.currentSongIndex - 1;
-                if (newIndex < 0) newIndex = appState.songs.length - 1;
-                playSong(newIndex);
-            }
+            let newIndex = appState.currentSongIndex - 1;
+            if (newIndex < 0) newIndex = appState.songs.length - 1;
+            
+            playSong(newIndex);
         }
 
         // Play Next
@@ -1825,21 +1669,16 @@
                 return;
             }
             
-            if (appState.shuffleMode) {
-                // Play random song
-                const randomIndex = Math.floor(Math.random() * appState.songs.length);
-                playSong(randomIndex);
-            } else {
-                let newIndex = appState.currentSongIndex + 1;
-                if (newIndex >= appState.songs.length) {
-                    if (appState.repeatMode === 'all') {
-                        newIndex = 0;
-                    } else {
-                        return;
-                    }
+            let newIndex = appState.currentSongIndex + 1;
+            if (newIndex >= appState.songs.length) {
+                if (appState.repeatMode === 'all') {
+                    newIndex = 0;
+                } else {
+                    return;
                 }
-                playSong(newIndex);
             }
+            
+            playSong(newIndex);
         }
 
         // Update Progress
@@ -1882,6 +1721,25 @@
             appState.audioPlayer.currentTime = percentage * appState.audioPlayer.duration;
         }
 
+        // Toggle Like
+        function toggleLike() {
+            if (appState.currentSongIndex === -1) return;
+            
+            const song = appState.songs[appState.currentSongIndex];
+            const songId = song.id;
+            
+            if (appState.likedSongs.has(songId)) {
+                appState.likedSongs.delete(songId);
+                showToast('Removed from favorites');
+            } else {
+                appState.likedSongs.add(songId);
+                showToast('Added to favorites');
+            }
+            
+            updateLikeButton();
+            saveAppState();
+        }
+
         // Toggle Shuffle
         function toggleShuffle() {
             appState.shuffleMode = !appState.shuffleMode;
@@ -1910,45 +1768,21 @@
             showToast(messages[(currentIndex + 1) % modes.length]);
         }
 
-        // Toggle Like
-        function toggleLike() {
-            if (appState.currentSongIndex === -1) return;
-            
-            const song = appState.songs[appState.currentSongIndex];
-            song.liked = !song.liked;
-            
-            updateLikeButton();
-            showToast(song.liked ? 'Added to favorites' : 'Removed from favorites');
-        }
-
-        // Toggle Song Like from Library
-        function toggleSongLike(index) {
-            event.stopPropagation();
-            const song = appState.songs[index];
-            song.liked = !song.liked;
-            
-            // Update UI
-            renderLibrary();
-            if (index === appState.currentSongIndex) {
-                updateLikeButton();
-            }
-            
-            showToast(song.liked ? 'Added to favorites' : 'Removed from favorites');
-        }
-
         // Update Player UI
         function updatePlayerUI(song) {
             document.getElementById('playerSongName').textContent = song.name;
             document.getElementById('playerSongArtist').textContent = song.artist;
             document.getElementById('playerAlbum').style.background = `linear-gradient(135deg, ${song.color}, ${adjustColor(song.color, -30)})`;
+            document.getElementById('playerAlbum').innerHTML = song.name.charAt(0).toUpperCase();
         }
 
         // Update Now Playing UI
         function updateNowPlayingUI(song) {
             document.getElementById('npSongTitle').textContent = song.name;
             document.getElementById('npSongArtist').textContent = song.artist;
-            document.getElementById('npSongAlbum').textContent = song.album;
+            document.getElementById('npSongAlbum').textContent = song.album || 'Unknown Album';
             document.getElementById('npAlbumArt').style.background = `linear-gradient(135deg, ${song.color}, ${adjustColor(song.color, -30)})`;
+            document.getElementById('npAlbumArt').innerHTML = song.name.charAt(0).toUpperCase();
         }
 
         // Update Like Button
@@ -1956,7 +1790,7 @@
             if (appState.currentSongIndex === -1) return;
             
             const song = appState.songs[appState.currentSongIndex];
-            const isLiked = song.liked;
+            const isLiked = appState.likedSongs.has(song.id);
             
             const icon = isLiked ? 'fas fa-heart' : 'far fa-heart';
             const color = isLiked ? 'var(--danger)' : '';
@@ -1977,287 +1811,302 @@
             appState.currentTab = tabName;
             
             // Update active tab
-            document.querySelectorAll('.tab').forEach(tab => {
+            tabs.forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.tab === tabName);
             });
             
             // Render content
-            renderLibrary();
+            renderTabContent(tabName);
         }
 
-        // Sleep Timer Functions
-        function setTimer(minutes) {
-            appState.sleepTimer.duration = minutes * 60;
-            updateTimerDisplay();
-            
-            // Update active preset
-            document.querySelectorAll('.timer-preset').forEach(p => p.classList.remove('active'));
-            document.querySelector(`.timer-preset[data-minutes="${minutes}"]`).classList.add('active');
+        // Render Tab Content
+        function renderTabContent(tabName) {
+            switch(tabName) {
+                case 'songs':
+                    renderSongsList();
+                    break;
+                case 'albums':
+                    renderAlbumsGrid();
+                    break;
+                case 'artists':
+                    renderArtistsList();
+                    break;
+                case 'playlists':
+                    renderPlaylists();
+                    break;
+            }
         }
 
-        function startTimer() {
-            if (appState.sleepTimer.duration === 0) {
-                showToast('Please select a duration', 'warning');
+        // Render Songs List
+        function renderSongsList() {
+            if (appState.songs.length === 0) {
+                tabContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <h3>No songs found</h3>
+                        <p>Import some music to get started</p>
+                        <button class="permission-btn" style="margin-top: 20px;" onclick="refreshLibrary()">
+                            <i class="fas fa-redo"></i>
+                            Scan for Music
+                        </button>
+                    </div>
+                `;
                 return;
             }
             
-            appState.sleepTimer.active = true;
-            appState.sleepTimer.endTime = Date.now() + (appState.sleepTimer.duration * 1000);
+            let html = '<div class="songs-list">';
             
-            // Update UI
-            document.getElementById('startTimerBtn').style.display = 'none';
-            document.getElementById('cancelTimerBtn').style.display = 'block';
-            
-            // Start countdown
-            appState.sleepTimer.timerId = setInterval(updateTimer, 1000);
-            
-            showToast(`Sleep timer set for ${appState.sleepTimer.duration / 60} minutes`);
-        }
-
-        function cancelTimer() {
-            appState.sleepTimer.active = false;
-            clearInterval(appState.sleepTimer.timerId);
-            
-            // Update UI
-            document.getElementById('startTimerBtn').style.display = 'block';
-            document.getElementById('cancelTimerBtn').style.display = 'none';
-            
-            showToast('Sleep timer cancelled');
-        }
-
-        function updateTimer() {
-            if (!appState.sleepTimer.active) return;
-            
-            const remaining = Math.max(0, Math.floor((appState.sleepTimer.endTime - Date.now()) / 1000));
-            
-            if (remaining === 0) {
-                // Timer ended
-                appState.audioPlayer.pause();
-                cancelTimer();
-                showToast('Sleep timer ended playback');
-            }
-            
-            updateTimerDisplay();
-        }
-
-        function updateTimerDisplay() {
-            let seconds = appState.sleepTimer.duration;
-            
-            if (appState.sleepTimer.active && appState.sleepTimer.endTime) {
-                seconds = Math.max(0, Math.floor((appState.sleepTimer.endTime - Date.now()) / 1000));
-            }
-            
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            document.getElementById('timerDisplay').textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-
-        // Equalizer Functions
-        function initializeEqualizer() {
-            const frequencies = ['60', '150', '400', '1K', '2.4K', '6K', '15K'];
-            
-            // Set default preset
-            loadEQPreset('flat');
-        }
-
-        function renderEqualizer() {
-            const eqSliders = document.getElementById('eqSliders');
-            eqSliders.innerHTML = '';
-            
-            const frequencies = ['60', '150', '400', '1K', '2.4K', '6K', '15K'];
-            
-            frequencies.forEach((freq, index) => {
-                const gain = appState.equalizer.gains[index] || 0;
+            appState.songs.forEach((song, index) => {
+                const isPlaying = index === appState.currentSongIndex;
+                const isLiked = appState.likedSongs.has(song.id);
                 
-                const sliderContainer = document.createElement('div');
-                sliderContainer.className = 'eq-slider-container';
-                sliderContainer.innerHTML = `
-                    <div class="eq-slider" data-index="${index}">
-                        <div class="eq-slider-fill" style="height: ${50 + gain * 5}%"></div>
+                html += `
+                    <div class="song-item ${isPlaying ? 'playing' : ''}" data-index="${index}" onclick="playSong(${index})">
+                        <div class="song-art" style="background: linear-gradient(135deg, ${song.color}, ${adjustColor(song.color, -30)})">
+                            ${song.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="song-info">
+                            <div class="song-name">${song.name}</div>
+                            <div class="song-artist">${song.artist}</div>
+                        </div>
+                        <div class="song-duration">${song.duration}</div>
+                        <div class="song-menu" onclick="event.stopPropagation(); toggleSongLike(${index})">
+                            <i class="${isLiked ? 'fas' : 'far'} fa-heart" style="color: ${isLiked ? 'var(--danger)' : ''}"></i>
+                        </div>
                     </div>
-                    <div class="eq-frequency">${freq}</div>
                 `;
-                
-                // Add click event
-                const slider = sliderContainer.querySelector('.eq-slider');
-                slider.addEventListener('click', (e) => {
-                    const rect = slider.getBoundingClientRect();
-                    const clickY = e.clientY - rect.top;
-                    const height = rect.height;
-                    const gain = ((height - clickY) / height) * 20 - 10;
-                    
-                    appState.equalizer.gains[index] = Math.max(-10, Math.min(10, gain));
-                    slider.querySelector('.eq-slider-fill').style.height = `${50 + appState.equalizer.gains[index] * 5}%`;
-                    
-                    // Change preset to custom
-                    appState.equalizer.preset = 'custom';
-                });
-                
-                eqSliders.appendChild(sliderContainer);
             });
             
-            // Update status
-            document.getElementById('eqStatus').textContent = appState.equalizer.enabled ? 'On' : 'Off';
-            document.getElementById('eqToggleBtn').style.color = appState.equalizer.enabled ? 'var(--success)' : '';
+            html += '</div>';
+            tabContent.innerHTML = html;
         }
 
-        function toggleEqualizer() {
-            appState.equalizer.enabled = !appState.equalizer.enabled;
+        // Render Albums Grid
+        function renderAlbumsGrid() {
+            const albums = Object.values(appState.albums);
             
-            document.getElementById('eqStatus').textContent = appState.equalizer.enabled ? 'On' : 'Off';
-            document.getElementById('eqToggleBtn').style.color = appState.equalizer.enabled ? 'var(--success)' : '';
+            if (albums.length === 0) {
+                tabContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-record-vinyl"></i>
+                        </div>
+                        <h3>No albums found</h3>
+                        <p>Import some music to see albums</p>
+                    </div>
+                `;
+                return;
+            }
             
-            showToast(`Equalizer ${appState.equalizer.enabled ? 'enabled' : 'disabled'}`);
+            let html = '<div class="albums-grid">';
+            
+            albums.forEach(album => {
+                const songCount = album.songs.length;
+                const firstSong = album.songs[0];
+                
+                html += `
+                    <div class="album-card" onclick="playAlbum('${album.name}')">
+                        <div class="album-art" style="background: linear-gradient(135deg, ${album.color}, ${adjustColor(album.color, -30)})">
+                            <i class="fas fa-record-vinyl"></i>
+                        </div>
+                        <div class="album-info">
+                            <div class="album-name">${album.name}</div>
+                            <div class="album-artist">${album.artist}</div>
+                            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+                                ${songCount} song${songCount !== 1 ? 's' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            tabContent.innerHTML = html;
         }
 
-        function loadEQPreset(preset) {
-            const presets = {
-                flat: [0, 0, 0, 0, 0, 0, 0],
-                pop: [2, 1, 0, -1, 0, 1, 3],
-                rock: [4, 3, 2, 1, 0, 0, 1],
-                jazz: [0, 0, 1, 2, 3, 2, 1],
-                classical: [-1, 0, 1, 2, 3, 3, 2]
-            };
+        // Render Artists List
+        function renderArtistsList() {
+            const artists = Object.values(appState.artists);
             
-            appState.equalizer.preset = preset;
-            appState.equalizer.gains = presets[preset] || presets.flat;
+            if (artists.length === 0) {
+                tabContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <h3>No artists found</h3>
+                        <p>Import some music to see artists</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="artists-list">';
+            
+            artists.forEach(artist => {
+                const songCount = artist.songs.length;
+                const albumCount = artist.albums.size;
+                
+                html += `
+                    <div class="artist-card" onclick="playArtist('${artist.name}')">
+                        <div class="artist-avatar">
+                            ${artist.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="artist-name">${artist.name}</div>
+                        <div class="artist-songs">
+                            ${songCount} song${songCount !== 1 ? 's' : ''} • ${albumCount} album${albumCount !== 1 ? 's' : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            tabContent.innerHTML = html;
+        }
+
+        // Render Playlists
+        function renderPlaylists() {
+            // For now, just show empty state
+            tabContent.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3>No playlists yet</h3>
+                    <p>Create your first playlist</p>
+                    <button class="permission-btn" style="margin-top: 20px;" onclick="createPlaylist()">
+                        <i class="fas fa-plus"></i>
+                        Create Playlist
+                    </button>
+                </div>
+            `;
+        }
+
+        // Play Album
+        function playAlbum(albumName) {
+            const album = appState.albums[albumName];
+            if (!album || album.songs.length === 0) return;
+            
+            // Find first song from this album in main songs list
+            const firstSong = album.songs[0];
+            const index = appState.songs.findIndex(s => s.id === firstSong.id);
+            
+            if (index !== -1) {
+                playSong(index);
+                showNowPlaying();
+            }
+        }
+
+        // Play Artist
+        function playArtist(artistName) {
+            const artist = appState.artists[artistName];
+            if (!artist || artist.songs.length === 0) return;
+            
+            // Find first song from this artist in main songs list
+            const firstSong = artist.songs[0];
+            const index = appState.songs.findIndex(s => s.id === firstSong.id);
+            
+            if (index !== -1) {
+                playSong(index);
+                showNowPlaying();
+            }
+        }
+
+        // Toggle Song Like
+        function toggleSongLike(index) {
+            const song = appState.songs[index];
+            const songId = song.id;
+            
+            if (appState.likedSongs.has(songId)) {
+                appState.likedSongs.delete(songId);
+            } else {
+                appState.likedSongs.add(songId);
+            }
             
             // Update UI
-            renderEqualizer();
-            showToast(`${preset.charAt(0).toUpperCase() + preset.slice(1)} preset applied`);
-        }
-
-        function resetEqualizer() {
-            loadEQPreset('flat');
-        }
-
-        // Settings Functions
-        function loadSettingsUI() {
-            // Set current values
-            document.getElementById('darkModeToggle').checked = appState.settings.darkMode;
-            document.getElementById('crossfadeSlider').value = appState.settings.crossfade;
-            document.getElementById('crossfadeValue').textContent = appState.settings.crossfade + 's';
-            document.getElementById('gaplessToggle').checked = appState.settings.gapless;
-            document.getElementById('volumeBoostToggle').checked = appState.settings.volumeBoost;
-            document.getElementById('blurSlider').value = appState.settings.blurIntensity;
-            
-            // Set active theme
-            document.querySelectorAll('.theme-option').forEach(option => {
-                option.classList.toggle('active', option.dataset.theme === appState.settings.theme);
-            });
-            
-            // Set active wallpaper
-            document.querySelectorAll('.wallpaper-option').forEach(option => {
-                option.classList.toggle('active', option.dataset.wallpaper === appState.settings.wallpaper);
-            });
-        }
-
-        function applyTheme(theme) {
-            // Remove all theme classes
-            document.body.classList.remove('theme-light', 'theme-dark', 'theme-blue', 'theme-purple', 'theme-green');
-            
-            // Add selected theme class
-            if (theme !== 'default') {
-                document.body.classList.add('theme-' + theme);
+            if (index === appState.currentSongIndex) {
+                updateLikeButton();
             }
             
-            // Update active theme UI
-            document.querySelectorAll('.theme-option').forEach(option => {
-                option.classList.toggle('active', option.dataset.theme === theme);
-            });
+            renderSongsList();
+            saveAppState();
         }
 
-        function applyDarkMode(enabled) {
-            if (enabled) {
-                document.body.classList.remove('theme-light');
-                if (!document.body.classList.contains('theme-dark') && !appState.settings.theme.includes('theme-')) {
-                    document.body.classList.add('theme-dark');
-                }
+        // Refresh Library
+        function refreshLibrary() {
+            if (appState.hasPermission) {
+                showScanningScreen();
+                scanningText.textContent = 'Rescanning for new music...';
+                
+                // Simulate rescan (in real app, would rescan directories)
+                setTimeout(() => {
+                    hideScanningScreen();
+                    showToast('Library refreshed');
+                    renderSongsList();
+                }, 1000);
             } else {
-                document.body.classList.remove('theme-dark');
-                document.body.classList.add('theme-light');
+                requestStorageAccess();
             }
         }
 
-        function applyWallpaper(wallpaper) {
-            const wallpapers = {
-                none: '',
-                gradient1: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                gradient2: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                gradient3: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                gradient4: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-            };
-            
-            if (wallpaper === 'none') {
-                document.body.style.backgroundImage = '';
-            } else if (wallpapers[wallpaper]) {
-                document.body.style.backgroundImage = wallpapers[wallpaper];
+        // Show Screens
+        function showWelcomeScreen() {
+            hideAllScreens();
+            welcomeScreen.style.display = 'flex';
+        }
+
+        function showLibrary() {
+            hideAllScreens();
+            libraryScreen.style.display = 'block';
+            renderTabContent(appState.currentTab);
+        }
+
+        function showNowPlaying() {
+            hideAllScreens();
+            nowPlayingScreen.style.display = 'flex';
+            // Add to browser history
+            history.pushState({ screen: 'now-playing' }, 'Now Playing');
+        }
+
+        function hideNowPlaying() {
+            nowPlayingScreen.style.display = 'none';
+            history.back();
+        }
+
+        function showScanningScreen() {
+            scanningScreen.style.display = 'flex';
+            scanningProgress.style.width = '0%';
+            scanningStats.textContent = '0 files found';
+        }
+
+        function hideScanningScreen() {
+            scanningScreen.style.display = 'none';
+        }
+
+        function hideAllScreens() {
+            welcomeScreen.style.display = 'none';
+            libraryScreen.style.display = 'none';
+            nowPlayingScreen.style.display = 'none';
+        }
+
+        // Update Library Stats
+        function updateLibraryStats() {
+            const stats = document.querySelector('.library-stats');
+            if (stats) {
+                const totalDuration = appState.songs.reduce((sum, song) => sum + (song.durationSeconds || 0), 0);
+                stats.textContent = `${appState.songs.length} songs • ${formatTime(totalDuration)}`;
             }
-            
-            // Update active wallpaper UI
-            document.querySelectorAll('.wallpaper-option').forEach(option => {
-                option.classList.toggle('active', option.dataset.wallpaper === wallpaper);
-            });
         }
 
-        function applyBlur(intensity) {
-            document.querySelector('.app-container').style.backdropFilter = `blur(${intensity}px)`;
-        }
-
-        function selectCustomWallpaper() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.style.display = 'none';
-            
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        document.body.style.backgroundImage = `url(${event.target.result})`;
-                        appState.settings.wallpaper = 'custom';
-                        saveSettings();
-                        showToast('Custom wallpaper applied');
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-            
-            document.body.appendChild(input);
-            input.click();
-            document.body.removeChild(input);
-        }
-
-        function rescanMusic() {
-            showToast('Scanning for music...');
-            // Simulate scanning
-            setTimeout(() => {
-                showToast('Music library updated');
-            }, 1500);
-        }
-
-        function clearCache() {
-            showToast('Cache cleared');
-        }
-
-        // Utility Functions
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-
-        function adjustColor(color, amount) {
-            return color; // Simplified
-        }
-
+        // Show Toast
         function showToast(message, type = 'success') {
-            const toastMessage = document.getElementById('toastMessage');
             toastMessage.textContent = message;
+            toast.className = 'toast';
+            toast.classList.add('show');
             
-            // Set icon based on type
+            // Change icon based on type
             const icon = toast.querySelector('.toast-icon');
             if (type === 'error') {
                 icon.className = 'fas fa-exclamation-circle toast-icon';
@@ -2270,27 +2119,124 @@
                 icon.style.color = 'var(--success)';
             }
             
-            toast.classList.add('show');
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
 
-        function updateUI() {
-            // Apply current settings
-            applyTheme(appState.settings.theme);
-            applyDarkMode(appState.settings.darkMode);
-            applyWallpaper(appState.settings.wallpaper);
-            applyBlur(appState.settings.blurIntensity);
+        // Save App State
+        function saveAppState() {
+            const state = {
+                songs: appState.songs.map(song => ({
+                    ...song,
+                    file: undefined, // Don't save file object
+                    url: undefined   // Don't save blob URL
+                })),
+                hasPermission: appState.hasPermission,
+                likedSongs: Array.from(appState.likedSongs),
+                currentSongIndex: appState.currentSongIndex,
+                volume: appState.volume,
+                repeatMode: appState.repeatMode,
+                shuffleMode: appState.shuffleMode
+            };
+            
+            localStorage.setItem('meloAppState', JSON.stringify(state));
+        }
+
+        // Setup Swipe Gestures
+        function setupSwipeGestures() {
+            let startX, startY, endX, endY;
+            
+            document.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
+            
+            document.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].clientX;
+                endY = e.changedTouches[0].clientY;
+                
+                const diffX = endX - startX;
+                const diffY = endY - startY;
+                
+                // Only consider horizontal swipes with minimal vertical movement
+                if (Math.abs(diffX) > 50 && Math.abs(diffY) < 30) {
+                    if (diffX > 0) {
+                        // Swipe right - go back
+                        if (nowPlayingScreen.style.display === 'flex') {
+                            hideNowPlaying();
+                        }
+                    } else {
+                        // Swipe left - next song
+                        if (nowPlayingScreen.style.display === 'flex' || musicPlayer.style.display === 'flex') {
+                            playNext();
+                        }
+                    }
+                }
+            });
+        }
+
+        // Utility Functions
+        function extractFileName(filename) {
+            return filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+        }
+
+        function extractArtistFromName(filename) {
+            const name = extractFileName(filename);
+            if (name.includes('-')) {
+                const parts = name.split('-');
+                if (parts.length >= 2) {
+                    return parts[0].trim();
+                }
+            }
+            return 'Unknown Artist';
+        }
+
+        function extractAlbumFromPath(path) {
+            const parts = path.split('/').filter(p => p);
+            return parts.length > 0 ? parts[parts.length - 1] : 'Unknown Album';
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds) || seconds === 0) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function generateRandomColor() {
+            const colors = [
+                '#8b5cf6', '#0ea5e9', '#10b981', '#f59e0b', 
+                '#ef4444', '#ec4899', '#6366f1', '#06b6d4',
+                '#84cc16', '#f97316', '#a855f7', '#3b82f6'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function adjustColor(color, amount) {
+            return color; // Simplified for now
         }
 
         function handleAudioError(error) {
             console.error('Audio error:', error);
-            showToast('Error playing audio', 'error');
+            showToast('Error playing audio file', 'error');
         }
 
-        // Initialize the app
+        function createPlaylist() {
+            showToast('Playlist creation coming soon');
+        }
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Handle service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('ServiceWorker registration failed:', err);
+                });
+            });
+        }
     </script>
 </body>
     </html>
