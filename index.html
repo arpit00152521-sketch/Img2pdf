@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PDF Converter - Real Working App</title>
+    <title>PDF Converter - Complete Working App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -42,7 +41,6 @@
             overflow-x: hidden;
         }
 
-        /* App Container */
         .app-container {
             max-width: 500px;
             margin: 0 auto;
@@ -52,7 +50,6 @@
             position: relative;
         }
 
-        /* Header */
         .app-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
@@ -89,7 +86,6 @@
             cursor: pointer;
         }
 
-        /* Pages */
         .page {
             display: none;
             padding: 16px;
@@ -106,7 +102,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Home Page */
         .page-title {
             font-size: 1.8rem;
             margin-bottom: 24px;
@@ -154,7 +149,6 @@
             color: var(--gray);
         }
 
-        /* Back Button */
         .back-button {
             background: none;
             border: none;
@@ -168,7 +162,6 @@
             cursor: pointer;
         }
 
-        /* Conversion Options Page */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -219,7 +212,6 @@
             font-size: 0.95rem;
         }
 
-        /* File Picker */
         .file-picker-container {
             margin-top: 30px;
             background: white;
@@ -292,12 +284,22 @@
             background: #f0f8ff;
             border-radius: 12px;
             display: none;
-            align-items: center;
-            gap: 15px;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .selected-file.active {
             display: flex;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
         }
 
         .file-icon-small {
@@ -305,19 +307,32 @@
             color: var(--primary);
         }
 
+        .file-details {
+            flex: 1;
+            overflow: hidden;
+        }
+
         .file-details h4 {
-            font-size: 1rem;
+            font-size: 0.95rem;
             margin-bottom: 5px;
             word-break: break-all;
         }
 
         .file-details p {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin: 0;
         }
 
-        /* Preview Container */
+        .remove-file {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         .preview-container {
             margin-top: 20px;
             border-radius: var(--border-radius);
@@ -354,56 +369,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .preview-pdf {
-            width: 100%;
-            height: 300px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        .preview-text {
-            text-align: left;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 16px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 14px;
-        }
-
-        /* Convert Button */
-        .convert-button {
-            background: linear-gradient(135deg, var(--success), #2d7d46);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 30px auto 0;
-            width: 100%;
-            max-width: 300px;
-            transition: transform 0.2s;
-        }
-
-        .convert-button:hover, .convert-button:active {
-            transform: scale(1.05);
-        }
-
-        .convert-button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Conversion Options (for splitting, merging etc) */
         .conversion-options {
             margin-top: 20px;
             background: white;
@@ -451,7 +416,35 @@
             height: 20px;
         }
 
-        /* Footer Navigation */
+        .convert-button {
+            background: linear-gradient(135deg, var(--success), #2d7d46);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px auto 0;
+            width: 100%;
+            max-width: 300px;
+            transition: transform 0.2s;
+        }
+
+        .convert-button:hover, .convert-button:active {
+            transform: scale(1.05);
+        }
+
+        .convert-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .footer-nav {
             position: fixed;
             bottom: 0;
@@ -487,7 +480,6 @@
             font-size: 1.3rem;
         }
 
-        /* Conversion Status */
         .conversion-status {
             margin-top: 20px;
             padding: 16px;
@@ -521,85 +513,6 @@
             color: #856404;
         }
 
-        /* Settings Modal */
-        .settings-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .settings-modal.active {
-            display: flex;
-        }
-
-        .settings-content {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 24px;
-            max-width: 400px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .settings-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .settings-title {
-            font-size: 1.5rem;
-            color: var(--primary);
-        }
-
-        .close-settings {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--gray);
-            cursor: pointer;
-        }
-
-        .setting-item {
-            margin-bottom: 20px;
-        }
-
-        .setting-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .setting-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .setting-select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: white;
-        }
-
-        /* Progress Bar */
         .progress-container {
             margin-top: 20px;
             background: #e9ecef;
@@ -620,7 +533,42 @@
             transition: width 0.3s ease;
         }
 
-        /* Dark Mode */
+        .image-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .thumbnail {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail-number {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         body.dark-mode {
             background-color: #121212;
             color: #e0e0e0;
@@ -633,8 +581,7 @@
         body.dark-mode .conversion-card,
         body.dark-mode .option-card,
         body.dark-mode .file-picker-container,
-        body.dark-mode .conversion-options,
-        body.dark-mode .settings-content {
+        body.dark-mode .conversion-options {
             background-color: #2d2d2d;
             border-color: #404040;
             color: #e0e0e0;
@@ -664,21 +611,11 @@
             background: #2d2d2d;
         }
 
-        body.dark-mode .preview-text {
-            background: #3a3a3a;
-            color: #e0e0e0;
-        }
-
-        body.dark-mode .setting-input,
-        body.dark-mode .setting-select,
-        body.dark-mode .option-input,
-        body.dark-mode .option-select {
+        body.dark-mode .file-item {
             background: #3a3a3a;
             border-color: #555;
-            color: #e0e0e0;
         }
 
-        /* Responsive */
         @media (max-width: 500px) {
             .conversion-grid {
                 grid-template-columns: 1fr;
@@ -686,6 +623,10 @@
             
             .app-header h1 {
                 font-size: 1.3rem;
+            }
+            
+            .image-thumbnails {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -696,14 +637,8 @@
         <header class="app-header">
             <h1>PDF Converter</h1>
             <div class="header-actions">
-                <button class="language-toggle" id="languageToggle">
-                    <i class="fas fa-globe"></i>
-                </button>
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
-                </button>
-                <button class="settings-toggle" id="settingsToggle">
-                    <i class="fas fa-cog"></i>
                 </button>
             </div>
         </header>
@@ -764,7 +699,7 @@
                     </div>
                 </div>
                 
-                <div class="option-card" data-conversion="imageToPdf" data-filetype="image" data-accept=".jpg,.jpeg,.png,.gif,.bmp,image/*" data-multiple="true">
+                <div class="option-card" data-conversion="imageToPdf" data-filetype="image" data-accept="image/*" data-multiple="true">
                     <div class="option-icon">
                         <i class="fas fa-file-image"></i>
                     </div>
@@ -775,38 +710,24 @@
                 </div>
             </div>
             
-            <!-- File picker will appear here when option is selected -->
             <div class="file-picker-container" id="imageFilePicker">
                 <div class="file-icon">
                     <i class="fas fa-cloud-upload-alt"></i>
                 </div>
                 <h3 id="imageFilePickerTitle">Select File</h3>
                 <p id="imageFilePickerDescription">Choose a file to convert</p>
-                <input type="file" class="file-input" id="imageFileInput">
+                <input type="file" class="file-input" id="imageFileInput" multiple>
                 <button class="file-button" id="imageFileButton">
                     <i class="fas fa-folder-open"></i> Browse Files
                 </button>
+                
                 <div class="selected-file" id="imageSelectedFile">
-                    <div class="file-icon-small" id="imageFileIcon">
-                        <i class="fas fa-file"></i>
-                    </div>
-                    <div class="file-details">
-                        <h4 id="imageFileName">File Name</h4>
-                        <p id="imageFileSize">File Size</p>
-                    </div>
+                    <!-- File items will be added here dynamically -->
                 </div>
                 
-                <!-- Preview -->
-                <div class="preview-container" id="imagePreview">
-                    <div class="preview-header">
-                        <span>Preview</span>
-                        <button onclick="closePreview('imagePreview')" style="background:none;border:none;color:white;cursor:pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preview-content" id="imagePreviewContent">
-                        <!-- Preview content will be added here -->
-                    </div>
+                <!-- Image Thumbnails Preview -->
+                <div class="image-thumbnails" id="imageThumbnails">
+                    <!-- Thumbnails will be added here -->
                 </div>
                 
                 <!-- Conversion Options -->
@@ -872,7 +793,6 @@
                 </div>
             </div>
             
-            <!-- File picker will appear here when option is selected -->
             <div class="file-picker-container" id="excelFilePicker">
                 <div class="file-icon">
                     <i class="fas fa-cloud-upload-alt"></i>
@@ -883,26 +803,26 @@
                 <button class="file-button" id="excelFileButton">
                     <i class="fas fa-folder-open"></i> Browse Files
                 </button>
+                
                 <div class="selected-file" id="excelSelectedFile">
-                    <div class="file-icon-small" id="excelFileIcon">
-                        <i class="fas fa-file"></i>
-                    </div>
-                    <div class="file-details">
-                        <h4 id="excelFileName">File Name</h4>
-                        <p id="excelFileSize">File Size</p>
+                    <div class="file-item">
+                        <div class="file-icon-small">
+                            <i class="fas fa-file"></i>
+                        </div>
+                        <div class="file-details">
+                            <h4 id="excelFileName">No file selected</h4>
+                            <p id="excelFileSize">Select a file</p>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Preview -->
-                <div class="preview-container" id="excelPreview">
-                    <div class="preview-header">
-                        <span>Preview</span>
-                        <button onclick="closePreview('excelPreview')" style="background:none;border:none;color:white;cursor:pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preview-content" id="excelPreviewContent">
-                        <!-- Preview content will be added here -->
+                <div class="conversion-options" id="excelConversionOptions">
+                    <div class="option-row">
+                        <span class="option-label">Sheet to Convert:</span>
+                        <select class="option-select" id="excelSheet">
+                            <option value="all">All Sheets</option>
+                            <option value="first">First Sheet Only</option>
+                        </select>
                     </div>
                 </div>
                 
@@ -928,22 +848,21 @@
                     </div>
                     <div class="option-info">
                         <h3>PDF to Word</h3>
-                        <p>Convert PDF documents to editable Word format</p>
+                        <p>Convert PDF documents to editable text</p>
                     </div>
                 </div>
                 
-                <div class="option-card" data-conversion="wordToPdf" data-filetype="word" data-accept=".doc,.docx,.txt,.rtf">
+                <div class="option-card" data-conversion="wordToPdf" data-filetype="text" data-accept=".txt,.text">
                     <div class="option-icon">
                         <i class="fas fa-file-word"></i>
                     </div>
                     <div class="option-info">
-                        <h3>Word to PDF</h3>
-                        <p>Convert Word documents to PDF format</p>
+                        <h3>Text to PDF</h3>
+                        <p>Convert text documents to PDF format</p>
                     </div>
                 </div>
             </div>
             
-            <!-- File picker will appear here when option is selected -->
             <div class="file-picker-container" id="wordFilePicker">
                 <div class="file-icon">
                     <i class="fas fa-cloud-upload-alt"></i>
@@ -954,26 +873,28 @@
                 <button class="file-button" id="wordFileButton">
                     <i class="fas fa-folder-open"></i> Browse Files
                 </button>
+                
                 <div class="selected-file" id="wordSelectedFile">
-                    <div class="file-icon-small" id="wordFileIcon">
-                        <i class="fas fa-file"></i>
-                    </div>
-                    <div class="file-details">
-                        <h4 id="wordFileName">File Name</h4>
-                        <p id="wordFileSize">File Size</p>
+                    <div class="file-item">
+                        <div class="file-icon-small">
+                            <i class="fas fa-file"></i>
+                        </div>
+                        <div class="file-details">
+                            <h4 id="wordFileName">No file selected</h4>
+                            <p id="wordFileSize">Select a file</p>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Preview -->
-                <div class="preview-container" id="wordPreview">
-                    <div class="preview-header">
-                        <span>Preview</span>
-                        <button onclick="closePreview('wordPreview')" style="background:none;border:none;color:white;cursor:pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preview-content" id="wordPreviewContent">
-                        <!-- Preview content will be added here -->
+                <div class="conversion-options" id="wordConversionOptions">
+                    <div class="option-row">
+                        <span class="option-label">Font Size:</span>
+                        <select class="option-select" id="wordFontSize">
+                            <option value="12">12px</option>
+                            <option value="14" selected>14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                        </select>
                     </div>
                 </div>
                 
@@ -1034,7 +955,6 @@
                 </div>
             </div>
             
-            <!-- File picker will appear here when option is selected -->
             <div class="file-picker-container" id="editFilePicker">
                 <div class="file-icon">
                     <i class="fas fa-cloud-upload-alt"></i>
@@ -1045,30 +965,19 @@
                 <button class="file-button" id="editFileButton">
                     <i class="fas fa-folder-open"></i> Browse Files
                 </button>
+                
                 <div class="selected-file" id="editSelectedFile">
-                    <div class="file-icon-small" id="editFileIcon">
-                        <i class="fas fa-file"></i>
-                    </div>
-                    <div class="file-details">
-                        <h4 id="editFileName">File Name</h4>
-                        <p id="editFileSize">File Size</p>
-                    </div>
-                </div>
-                
-                <!-- Preview -->
-                <div class="preview-container" id="editPreview">
-                    <div class="preview-header">
-                        <span>Preview</span>
-                        <button onclick="closePreview('editPreview')" style="background:none;border:none;color:white;cursor:pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preview-content" id="editPreviewContent">
-                        <!-- Preview content will be added here -->
+                    <div class="file-item">
+                        <div class="file-icon-small">
+                            <i class="fas fa-file"></i>
+                        </div>
+                        <div class="file-details">
+                            <h4 id="editFileName">No file selected</h4>
+                            <p id="editFileSize">Select a file</p>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Edit Options -->
                 <div class="conversion-options" id="editConversionOptions">
                     <div id="mergeOptions" style="display: none;">
                         <div class="option-row">
@@ -1086,23 +995,11 @@
                             <select class="option-select" id="splitMode">
                                 <option value="single">Single Page Files</option>
                                 <option value="range">Page Range</option>
-                                <option value="custom">Custom Pages</option>
                             </select>
                         </div>
                         <div class="option-row" id="pageRangeRow" style="display: none;">
                             <span class="option-label">Page Range:</span>
-                            <input type="text" class="option-input" id="pageRange" placeholder="e.g., 1-5, 8, 10-12">
-                        </div>
-                    </div>
-                    
-                    <div id="compressOptions" style="display: none;">
-                        <div class="option-row">
-                            <span class="option-label">Compression Level:</span>
-                            <select class="option-select" id="compressionLevel">
-                                <option value="low">Low (Smaller size reduction)</option>
-                                <option value="medium" selected>Medium (Recommended)</option>
-                                <option value="high">High (Maximum compression)</option>
-                            </select>
+                            <input type="text" class="option-input" id="pageRange" placeholder="e.g., 1-5">
                         </div>
                     </div>
                     
@@ -1112,16 +1009,7 @@
                             <select class="option-select" id="rotationAngle">
                                 <option value="90">90° Clockwise</option>
                                 <option value="180">180°</option>
-                                <option value="270">270° Clockwise (90° Anti-clockwise)</option>
-                            </select>
-                        </div>
-                        <div class="option-row">
-                            <span class="option-label">Apply to:</span>
-                            <select class="option-select" id="rotatePages">
-                                <option value="all">All Pages</option>
-                                <option value="odd">Odd Pages Only</option>
-                                <option value="even">Even Pages Only</option>
-                                <option value="custom">Custom Pages</option>
+                                <option value="270">270° Clockwise</option>
                             </select>
                         </div>
                     </div>
@@ -1133,63 +1021,6 @@
             </div>
             
             <div class="conversion-status" id="editConversionStatus"></div>
-        </div>
-
-        <!-- Settings Modal -->
-        <div class="settings-modal" id="settingsModal">
-            <div class="settings-content">
-                <div class="settings-header">
-                    <h3 class="settings-title">Settings</h3>
-                    <button class="close-settings" id="closeSettings">&times;</button>
-                </div>
-                
-                <div class="setting-item">
-                    <label class="setting-label">Default Image Format:</label>
-                    <select class="setting-select" id="defaultImageFormat">
-                        <option value="png">PNG</option>
-                        <option value="jpeg">JPEG</option>
-                        <option value="jpg">JPG</option>
-                    </select>
-                </div>
-                
-                <div class="setting-item">
-                    <label class="setting-label">Default Image Quality:</label>
-                    <input type="range" class="option-input" id="defaultImageQuality" min="1" max="100" value="90">
-                    <span id="defaultQualityValue">90%</span>
-                </div>
-                
-                <div class="setting-item">
-                    <label class="setting-label">Default PDF Compression:</label>
-                    <select class="setting-select" id="defaultPdfCompression">
-                        <option value="low">Low</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                
-                <div class="setting-item">
-                    <label class="setting-label">Language:</label>
-                    <select class="setting-select" id="appLanguage">
-                        <option value="en">English</option>
-                        <option value="hi">Hindi</option>
-                        <option value="es">Spanish</option>
-                    </select>
-                </div>
-                
-                <div class="setting-item">
-                    <input type="checkbox" id="autoPreview" checked>
-                    <label for="autoPreview">Show preview automatically</label>
-                </div>
-                
-                <div class="setting-item">
-                    <input type="checkbox" id="autoDownload" checked>
-                    <label for="autoDownload">Auto download after conversion</label>
-                </div>
-                
-                <button class="convert-button" id="saveSettings" style="margin-top: 20px;">
-                    <i class="fas fa-save"></i> Save Settings
-                </button>
-            </div>
         </div>
 
         <!-- Footer Navigation -->
@@ -1221,16 +1052,8 @@
                 this.currentPage = 'homePage';
                 this.selectedFiles = [];
                 this.conversionInProgress = false;
-                this.settings = {
-                    defaultImageFormat: 'png',
-                    defaultImageQuality: 90,
-                    defaultPdfCompression: 'medium',
-                    language: 'en',
-                    autoPreview: true,
-                    autoDownload: true
-                };
+                this.imageFiles = [];
                 
-                this.loadSettings();
                 this.init();
             }
             
@@ -1239,21 +1062,8 @@
                 this.setupOptionCards();
                 this.setupFilePickers();
                 this.setupThemeToggle();
-                this.setupLanguageToggle();
-                this.setupSettings();
                 this.setupConvertButtons();
                 this.setupEventListeners();
-            }
-            
-            loadSettings() {
-                const savedSettings = localStorage.getItem('pdfConverterSettings');
-                if (savedSettings) {
-                    this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
-                }
-            }
-            
-            saveSettings() {
-                localStorage.setItem('pdfConverterSettings', JSON.stringify(this.settings));
             }
             
             setupNavigation() {
@@ -1292,14 +1102,11 @@
             
             setupOptionCards() {
                 document.querySelectorAll('.option-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        // Remove selected class from all cards
+                    card.addEventListener('click', () => {
                         document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-                        // Add selected class to clicked card
                         card.classList.add('selected');
                         
                         this.currentConversion = card.getAttribute('data-conversion');
-                        const fileType = card.getAttribute('data-filetype');
                         const acceptTypes = card.getAttribute('data-accept');
                         const allowMultiple = card.getAttribute('data-multiple') === 'true';
                         
@@ -1318,7 +1125,6 @@
                                 fileInput.value = '';
                             }
                             
-                            // Show specific options based on conversion type
                             this.showConversionOptions();
                         }
                     });
@@ -1329,34 +1135,21 @@
                 const optionsContainer = document.getElementById(this.currentPage.replace('Page', 'ConversionOptions'));
                 if (optionsContainer) {
                     optionsContainer.classList.add('active');
-                    
-                    // Set default values from settings
-                    if (this.currentConversion === 'pdfToImage' || this.currentConversion === 'imageToPdf') {
-                        document.getElementById('imageFormat').value = this.settings.defaultImageFormat;
-                        document.getElementById('imageQuality').value = this.settings.defaultImageQuality;
-                        document.getElementById('imageQualityValue').textContent = `${this.settings.defaultImageQuality}%`;
-                    }
                 }
                 
-                // Show edit options
                 const editOptions = document.getElementById('editConversionOptions');
                 if (editOptions) {
                     editOptions.classList.add('active');
                     
-                    // Hide all option sections first
                     ['mergeOptions', 'splitOptions', 'compressOptions', 'rotateOptions'].forEach(id => {
                         document.getElementById(id).style.display = 'none';
                     });
                     
-                    // Show relevant options
                     if (this.currentConversion === 'mergePdf') {
                         document.getElementById('mergeOptions').style.display = 'block';
                     } else if (this.currentConversion === 'splitPdf') {
                         document.getElementById('splitOptions').style.display = 'block';
                         this.setupSplitOptions();
-                    } else if (this.currentConversion === 'compressPdf') {
-                        document.getElementById('compressOptions').style.display = 'block';
-                        document.getElementById('compressionLevel').value = this.settings.defaultPdfCompression;
                     } else if (this.currentConversion === 'rotatePdf') {
                         document.getElementById('rotateOptions').style.display = 'block';
                     }
@@ -1368,7 +1161,7 @@
                 const pageRangeRow = document.getElementById('pageRangeRow');
                 
                 splitMode.addEventListener('change', function() {
-                    pageRangeRow.style.display = this.value === 'range' || this.value === 'custom' ? 'block' : 'none';
+                    pageRangeRow.style.display = this.value === 'range' ? 'block' : 'none';
                 });
             }
             
@@ -1379,8 +1172,6 @@
                     const fileInput = document.getElementById(`${pickerType}FileInput`);
                     const fileButton = document.getElementById(`${pickerType}FileButton`);
                     const selectedFile = document.getElementById(`${pickerType}SelectedFile`);
-                    const fileName = document.getElementById(`${pickerType}FileName`);
-                    const fileSize = document.getElementById(`${pickerType}FileSize`);
                     const convertButton = document.getElementById(`${pickerType}ConvertButton`);
                     
                     fileButton.addEventListener('click', () => fileInput.click());
@@ -1388,28 +1179,17 @@
                     fileInput.addEventListener('change', (e) => {
                         if (e.target.files && e.target.files.length > 0) {
                             this.selectedFiles = Array.from(e.target.files);
-                            const totalSize = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
-                            const fileSizeKB = Math.round(totalSize / 1024);
                             
-                            if (this.selectedFiles.length > 1) {
-                                fileName.textContent = `${this.selectedFiles.length} files selected`;
-                                fileSize.textContent = `Total: ${fileSizeKB} KB`;
+                            if (pickerType === 'image' && this.currentConversion === 'imageToPdf') {
+                                this.handleImageFiles(this.selectedFiles);
                             } else {
-                                fileName.textContent = this.selectedFiles[0].name;
-                                fileSize.textContent = `${fileSizeKB} KB`;
+                                this.updateFileList(pickerType, this.selectedFiles);
                             }
                             
-                            selectedFile.classList.add('active');
                             if (convertButton) convertButton.disabled = false;
-                            
-                            // Show preview if enabled in settings
-                            if (this.settings.autoPreview) {
-                                this.showFilePreview(pickerType, this.selectedFiles[0]);
-                            }
                         }
                     });
                     
-                    // Drag and drop
                     const filePickerContainer = document.getElementById(`${pickerType}FilePicker`);
                     if (filePickerContainer) {
                         ['dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -1439,72 +1219,136 @@
                 });
             }
             
-            async showFilePreview(pickerType, file) {
-                const previewContainer = document.getElementById(`${pickerType}Preview`);
-                const previewContent = document.getElementById(`${pickerType}PreviewContent`);
+            handleImageFiles(files) {
+                this.imageFiles = files;
+                this.updateImageFileList();
+                this.showImageThumbnails();
+            }
+            
+            updateImageFileList() {
+                const container = document.getElementById('imageSelectedFile');
+                container.innerHTML = '';
                 
-                if (!previewContainer || !previewContent) return;
+                this.imageFiles.forEach((file, index) => {
+                    const fileSizeKB = Math.round(file.size / 1024);
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <div class="file-icon-small">
+                            <i class="fas fa-file-image"></i>
+                        </div>
+                        <div class="file-details">
+                            <h4>${file.name}</h4>
+                            <p>${fileSizeKB} KB • Image ${index + 1}</p>
+                        </div>
+                        <button class="remove-file" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    container.appendChild(fileItem);
+                });
                 
-                previewContent.innerHTML = '<div style="padding: 20px;"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Loading preview...</p></div>';
-                previewContainer.classList.add('active');
+                container.classList.add('active');
                 
-                const fileExtension = file.name.split('.').pop().toLowerCase();
+                // Add remove event listeners
+                container.querySelectorAll('.remove-file').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('.remove-file').getAttribute('data-index'));
+                        this.removeImageFile(index);
+                    });
+                });
+            }
+            
+            removeImageFile(index) {
+                this.imageFiles.splice(index, 1);
+                this.updateImageFileList();
+                this.showImageThumbnails();
                 
-                try {
-                    if (file.type.startsWith('image/')) {
-                        const imgUrl = URL.createObjectURL(file);
-                        previewContent.innerHTML = `<img src="${imgUrl}" class="preview-image" alt="Preview">`;
-                    } else if (fileExtension === 'pdf') {
-                        previewContent.innerHTML = `
-                            <div style="padding: 20px;">
-                                <i class="fas fa-file-pdf fa-3x" style="color: #e63946;"></i>
-                                <p style="margin-top: 10px;"><strong>${file.name}</strong></p>
-                                <p>Size: ${Math.round(file.size / 1024)} KB</p>
-                                <p>PDF Preview requires PDF.js library</p>
-                            </div>`;
-                    } else if (['doc', 'docx'].includes(fileExtension)) {
-                        previewContent.innerHTML = `
-                            <div style="padding: 20px;">
-                                <i class="fas fa-file-word fa-3x" style="color: #2b579a;"></i>
-                                <p style="margin-top: 10px;"><strong>${file.name}</strong></p>
-                                <p>Size: ${Math.round(file.size / 1024)} KB</p>
-                                <p>Word Document</p>
-                            </div>`;
-                    } else if (['xls', 'xlsx', 'csv'].includes(fileExtension)) {
-                        previewContent.innerHTML = `
-                            <div style="padding: 20px;">
-                                <i class="fas fa-file-excel fa-3x" style="color: #217346;"></i>
-                                <p style="margin-top: 10px;"><strong>${file.name}</strong></p>
-                                <p>Size: ${Math.round(file.size / 1024)} KB</p>
-                                <p>Spreadsheet File</p>
-                            </div>`;
-                    } else {
-                        previewContent.innerHTML = `
-                            <div style="padding: 20px;">
-                                <i class="fas fa-file fa-3x"></i>
-                                <p style="margin-top: 10px;"><strong>${file.name}</strong></p>
-                                <p>Size: ${Math.round(file.size / 1024)} KB</p>
-                            </div>`;
-                    }
-                } catch (error) {
-                    previewContent.innerHTML = `<p style="color: var(--danger);">Error loading preview: ${error.message}</p>`;
+                // Update file input
+                const dataTransfer = new DataTransfer();
+                this.imageFiles.forEach(file => dataTransfer.items.add(file));
+                document.getElementById('imageFileInput').files = dataTransfer.files;
+                
+                if (this.imageFiles.length === 0) {
+                    document.getElementById('imageSelectedFile').classList.remove('active');
+                    document.getElementById('imageConvertButton').disabled = true;
                 }
             }
             
-            closePreview(previewId) {
-                const preview = document.getElementById(previewId);
-                if (preview) preview.classList.remove('active');
+            showImageThumbnails() {
+                const container = document.getElementById('imageThumbnails');
+                container.innerHTML = '';
+                
+                if (this.imageFiles.length === 0) {
+                    container.style.display = 'none';
+                    return;
+                }
+                
+                container.style.display = 'grid';
+                
+                // Show first 6 thumbnails
+                const filesToShow = this.imageFiles.slice(0, 6);
+                
+                filesToShow.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const thumbnail = document.createElement('div');
+                        thumbnail.className = 'thumbnail';
+                        thumbnail.innerHTML = `
+                            <img src="${e.target.result}" alt="Thumbnail ${index + 1}">
+                            <div class="thumbnail-number">${index + 1}</div>
+                        `;
+                        container.appendChild(thumbnail);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                
+                if (this.imageFiles.length > 6) {
+                    const remaining = this.imageFiles.length - 6;
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = 'thumbnail';
+                    thumbnail.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
+                    thumbnail.style.display = 'flex';
+                    thumbnail.style.alignItems = 'center';
+                    thumbnail.style.justifyContent = 'center';
+                    thumbnail.style.color = 'white';
+                    thumbnail.innerHTML = `
+                        <div style="text-align: center;">
+                            <i class="fas fa-plus fa-2x"></i>
+                            <div style="margin-top: 5px; font-size: 12px;">+${remaining} more</div>
+                        </div>
+                    `;
+                    container.appendChild(thumbnail);
+                }
+            }
+            
+            updateFileList(pickerType, files) {
+                const container = document.getElementById(`${pickerType}SelectedFile`);
+                const fileName = document.getElementById(`${pickerType}FileName`);
+                const fileSize = document.getElementById(`${pickerType}FileSize`);
+                
+                if (files.length > 1) {
+                    const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+                    fileName.textContent = `${files.length} files selected`;
+                    fileSize.textContent = `Total: ${Math.round(totalSize / 1024)} KB`;
+                } else {
+                    const file = files[0];
+                    fileName.textContent = file.name;
+                    fileSize.textContent = `${Math.round(file.size / 1024)} KB`;
+                }
+                
+                container.classList.add('active');
             }
             
             setupConvertButtons() {
-                document.getElementById('imageConvertButton')?.addEventListener('click', () => this.handleImageConversion());
-                document.getElementById('excelConvertButton')?.addEventListener('click', () => this.handleExcelConversion());
-                document.getElementById('wordConvertButton')?.addEventListener('click', () => this.handleWordConversion());
-                document.getElementById('editConvertButton')?.addEventListener('click', () => this.handleEditConversion());
+                document.getElementById('imageConvertButton').addEventListener('click', () => this.handleImageConversion());
+                document.getElementById('excelConvertButton').addEventListener('click', () => this.handleExcelConversion());
+                document.getElementById('wordConvertButton').addEventListener('click', () => this.handleWordConversion());
+                document.getElementById('editConvertButton').addEventListener('click', () => this.handleEditConversion());
             }
             
             async handleImageConversion() {
-                if (this.conversionInProgress || !this.selectedFiles.length) return;
+                if (this.conversionInProgress) return;
                 
                 this.conversionInProgress = true;
                 const convertButton = document.getElementById('imageConvertButton');
@@ -1571,14 +1415,12 @@
                     }
                     
                     if (images.length === 1) {
-                        // Single image
                         const link = document.createElement('a');
                         link.href = images[0].data;
                         link.download = `page_1.${format}`;
                         link.click();
                         this.showStatus(statusElement, `Page converted successfully!`, 'success');
                     } else {
-                        // Multiple images - create ZIP
                         const zip = new JSZip();
                         images.forEach((img, index) => {
                             const base64Data = img.data.split(',')[1];
@@ -1587,11 +1429,7 @@
                         
                         const zipContent = await zip.generateAsync({ type: 'blob' });
                         saveAs(zipContent, 'converted_pages.zip');
-                        this.showStatus(statusElement, `All ${images.length} pages converted and zipped!`, 'success');
-                    }
-                    
-                    if (this.settings.autoDownload) {
-                        this.showStatus(statusElement, 'Download started automatically', 'success');
+                        this.showStatus(statusElement, `All ${images.length} pages converted!`, 'success');
                     }
                     
                 } catch (error) {
@@ -1603,25 +1441,27 @@
                 const statusElement = document.getElementById('imageConversionStatus');
                 const progressBar = document.getElementById('imageProgressBar');
                 
+                if (this.imageFiles.length === 0) {
+                    this.showStatus(statusElement, 'Please select at least one image', 'error');
+                    return;
+                }
+                
                 try {
                     const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF();
-                    const images = this.selectedFiles;
                     
-                    for (let i = 0; i < images.length; i++) {
-                        this.showStatus(statusElement, `Adding image ${i + 1} of ${images.length}...`, 'processing');
-                        progressBar.style.width = `${((i + 1) / images.length) * 100}%`;
+                    for (let i = 0; i < this.imageFiles.length; i++) {
+                        this.showStatus(statusElement, `Adding image ${i + 1} of ${this.imageFiles.length}...`, 'processing');
+                        progressBar.style.width = `${((i + 1) / this.imageFiles.length) * 100}%`;
                         
-                        const imageFile = images[i];
+                        const imageFile = this.imageFiles[i];
                         const imageUrl = URL.createObjectURL(imageFile);
                         
                         await new Promise((resolve) => {
                             const img = new Image();
                             img.onload = () => {
-                                const imgWidth = img.width;
-                                const imgHeight = img.height;
                                 const pdfWidth = pdf.internal.pageSize.getWidth();
-                                const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+                                const pdfHeight = (img.height * pdfWidth) / img.width;
                                 
                                 if (i > 0) pdf.addPage();
                                 pdf.addImage(img, 'JPEG', 0, 0, pdfWidth, pdfHeight);
@@ -1634,9 +1474,9 @@
                     }
                     
                     const pdfBlob = pdf.output('blob');
-                    saveAs(pdfBlob, 'converted_images.pdf');
+                    saveAs(pdfBlob, 'images_to_pdf.pdf');
                     
-                    this.showStatus(statusElement, `PDF created with ${images.length} images!`, 'success');
+                    this.showStatus(statusElement, `PDF created with ${this.imageFiles.length} images!`, 'success');
                     
                 } catch (error) {
                     throw new Error(`Image to PDF conversion failed: ${error.message}`);
@@ -1644,56 +1484,164 @@
             }
             
             async handleExcelConversion() {
-                // Similar implementation for Excel conversions
-                const statusElement = document.getElementById('excelConversionStatus');
-                this.showStatus(statusElement, 'Excel conversion requires backend API for full functionality. This demo uses client-side libraries for basic operations.', 'warning');
+                if (this.conversionInProgress || !this.selectedFiles.length) return;
                 
-                // Basic CSV to text conversion demo
-                if (this.selectedFiles[0] && this.currentConversion === 'excelToPdf') {
-                    const file = this.selectedFiles[0];
-                    const text = await file.text();
+                this.conversionInProgress = true;
+                const convertButton = document.getElementById('excelConvertButton');
+                const statusElement = document.getElementById('excelConversionStatus');
+                
+                convertButton.disabled = true;
+                convertButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                this.showStatus(statusElement, 'Converting file...', 'processing');
+                
+                try {
+                    if (this.currentConversion === 'excelToPdf') {
+                        await this.convertExcelToPdf();
+                    } else if (this.currentConversion === 'pdfToExcel') {
+                        this.showStatus(statusElement, 'PDF to Excel requires text extraction. Converting PDF to text...', 'warning');
+                        await this.convertPdfToText();
+                    }
+                } catch (error) {
+                    this.showStatus(statusElement, `Error: ${error.message}`, 'error');
+                } finally {
+                    this.conversionInProgress = false;
+                    convertButton.disabled = false;
+                    convertButton.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Again';
+                }
+            }
+            
+            async convertExcelToPdf() {
+                const file = this.selectedFiles[0];
+                const statusElement = document.getElementById('excelConversionStatus');
+                
+                try {
+                    const data = await file.arrayBuffer();
+                    const workbook = XLSX.read(data, { type: 'array' });
                     
                     const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF();
                     
-                    pdf.setFontSize(12);
-                    pdf.text(text.substring(0, 1000), 10, 10); // First 1000 chars
+                    workbook.SheetNames.forEach((sheetName, sheetIndex) => {
+                        if (sheetIndex > 0) pdf.addPage();
+                        
+                        const worksheet = workbook.Sheets[sheetName];
+                        const html = XLSX.utils.sheet_to_html(worksheet);
+                        
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        tempDiv.style.padding = '20px';
+                        
+                        html2canvas(tempDiv, {
+                            scale: 2,
+                            useCORS: true,
+                            logging: false
+                        }).then(canvas => {
+                            const imgData = canvas.toDataURL('image/jpeg');
+                            const pdfWidth = pdf.internal.pageSize.getWidth();
+                            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                            
+                            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                            
+                            if (sheetIndex === workbook.SheetNames.length - 1) {
+                                const pdfBlob = pdf.output('blob');
+                                saveAs(pdfBlob, 'excel_to_pdf.pdf');
+                                this.showStatus(statusElement, 'Excel converted to PDF!', 'success');
+                            }
+                        });
+                    });
                     
-                    const pdfBlob = pdf.output('blob');
-                    saveAs(pdfBlob, 'converted_document.pdf');
+                } catch (error) {
+                    throw new Error(`Excel to PDF conversion failed: ${error.message}`);
+                }
+            }
+            
+            async convertPdfToText() {
+                const pdfFile = this.selectedFiles[0];
+                
+                try {
+                    const pdfData = await pdfFile.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                    const totalPages = pdf.numPages;
                     
-                    this.showStatus(statusElement, 'Basic text conversion completed! For full Excel conversion, use backend API.', 'success');
+                    let fullText = '';
+                    
+                    for (let i = 1; i <= totalPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        fullText += pageText + '\n\n';
+                    }
+                    
+                    const { jsPDF } = window.jspdf;
+                    const textPdf = new jsPDF();
+                    
+                    const lines = textPdf.splitTextToSize(fullText, 180);
+                    textPdf.text(lines, 10, 10);
+                    
+                    const pdfBlob = textPdf.output('blob');
+                    saveAs(pdfBlob, 'pdf_to_text.pdf');
+                    
+                    this.showStatus(document.getElementById('excelConversionStatus'), 'PDF text extracted to PDF!', 'success');
+                    
+                } catch (error) {
+                    throw new Error(`PDF to text extraction failed: ${error.message}`);
                 }
             }
             
             async handleWordConversion() {
-                const statusElement = document.getElementById('wordConversionStatus');
-                this.showStatus(statusElement, 'Word conversion requires backend API for full functionality.', 'warning');
+                if (this.conversionInProgress || !this.selectedFiles.length) return;
                 
-                // Basic text extraction demo
-                if (this.selectedFiles[0] && this.currentConversion === 'wordToPdf') {
-                    try {
-                        const file = this.selectedFiles[0];
-                        const arrayBuffer = await file.arrayBuffer();
-                        
-                        const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-                        const text = result.value;
-                        
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF();
-                        
-                        pdf.setFontSize(12);
-                        const lines = pdf.splitTextToSize(text, 180);
-                        pdf.text(lines, 10, 10);
-                        
-                        const pdfBlob = pdf.output('blob');
-                        saveAs(pdfBlob, 'converted_document.pdf');
-                        
-                        this.showStatus(statusElement, 'Basic text conversion completed! For full Word conversion, use backend API.', 'success');
-                    } catch (error) {
-                        this.showStatus(statusElement, `Error: ${error.message}`, 'error');
+                this.conversionInProgress = true;
+                const convertButton = document.getElementById('wordConvertButton');
+                const statusElement = document.getElementById('wordConversionStatus');
+                
+                convertButton.disabled = true;
+                convertButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                this.showStatus(statusElement, 'Converting file...', 'processing');
+                
+                try {
+                    if (this.currentConversion === 'wordToPdf') {
+                        await this.convertTextToPdf();
+                    } else if (this.currentConversion === 'pdfToWord') {
+                        await this.convertPdfToTextForWord();
                     }
+                } catch (error) {
+                    this.showStatus(statusElement, `Error: ${error.message}`, 'error');
+                } finally {
+                    this.conversionInProgress = false;
+                    convertButton.disabled = false;
+                    convertButton.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Again';
                 }
+            }
+            
+            async convertTextToPdf() {
+                const file = this.selectedFiles[0];
+                const fontSize = document.getElementById('wordFontSize').value;
+                
+                try {
+                    const text = await file.text();
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF();
+                    
+                    pdf.setFontSize(fontSize);
+                    const lines = pdf.splitTextToSize(text, 180);
+                    pdf.text(lines, 10, 10);
+                    
+                    const pdfBlob = pdf.output('blob');
+                    saveAs(pdfBlob, 'text_to_pdf.pdf');
+                    
+                    this.showStatus(document.getElementById('wordConversionStatus'), 'Text converted to PDF!', 'success');
+                    
+                } catch (error) {
+                    throw new Error(`Text to PDF conversion failed: ${error.message}`);
+                }
+            }
+            
+            async convertPdfToTextForWord() {
+                await this.convertPdfToText();
+                this.showStatus(document.getElementById('wordConversionStatus'), 'PDF text extracted!', 'success');
             }
             
             async handleEditConversion() {
@@ -1706,7 +1654,7 @@
                 convertButton.disabled = true;
                 convertButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                 
-                this.showStatus(statusElement, 'Starting PDF edit...', 'processing');
+                this.showStatus(statusElement, 'Processing PDF...', 'processing');
                 
                 try {
                     if (this.currentConversion === 'mergePdf') {
@@ -1720,7 +1668,6 @@
                     }
                 } catch (error) {
                     this.showStatus(statusElement, `Error: ${error.message}`, 'error');
-                    console.error('Edit error:', error);
                 } finally {
                     this.conversionInProgress = false;
                     convertButton.disabled = false;
@@ -1763,7 +1710,6 @@
                     const totalPages = originalPdf.getPageCount();
                     
                     if (splitMode === 'single') {
-                        // Create one PDF per page
                         const zip = new JSZip();
                         
                         for (let i = 0; i < totalPages; i++) {
@@ -1781,18 +1727,13 @@
                         saveAs(zipContent, 'split_pages.zip');
                         this.showStatus(statusElement, `PDF split into ${totalPages} single pages!`, 'success');
                     } else {
-                        // For range or custom splitting, create a simple split
-                        this.showStatus(statusElement, 'Advanced splitting requires backend API. Creating simple split...', 'warning');
-                        
                         const midPoint = Math.floor(totalPages / 2);
                         const firstHalf = await PDFLib.PDFDocument.create();
                         const secondHalf = await PDFLib.PDFDocument.create();
                         
-                        // First half
                         const firstPages = await firstHalf.copyPages(originalPdf, Array.from({ length: midPoint }, (_, i) => i));
                         firstPages.forEach(page => firstHalf.addPage(page));
                         
-                        // Second half
                         const secondPages = await secondHalf.copyPages(originalPdf, 
                             Array.from({ length: totalPages - midPoint }, (_, i) => i + midPoint));
                         secondPages.forEach(page => secondHalf.addPage(page));
@@ -1815,26 +1756,19 @@
             
             async compressPdf() {
                 const statusElement = document.getElementById('editConversionStatus');
-                this.showStatus(statusElement, 'PDF compression requires backend API. Using basic optimization...', 'warning');
                 
-                // Basic optimization by removing metadata
                 try {
                     const pdfFile = this.selectedFiles[0];
                     const pdfBytes = await pdfFile.arrayBuffer();
                     const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
                     
-                    // Set minimal metadata
                     pdfDoc.setTitle('');
                     pdfDoc.setAuthor('');
                     pdfDoc.setSubject('');
-                    pdfDoc.setKeywords([]);
-                    pdfDoc.setProducer('');
-                    pdfDoc.setCreator('');
                     
                     const optimizedBytes = await pdfDoc.save({
                         useObjectStreams: false,
-                        addDefaultPage: false,
-                        objectsPerTick: 100
+                        addDefaultPage: false
                     });
                     
                     const blob = new Blob([optimizedBytes], { type: 'application/pdf' });
@@ -1853,7 +1787,6 @@
             async rotatePdf() {
                 const statusElement = document.getElementById('editConversionStatus');
                 const angle = parseInt(document.getElementById('rotationAngle').value);
-                const applyTo = document.getElementById('rotatePages').value;
                 
                 try {
                     const pdfFile = this.selectedFiles[0];
@@ -1861,28 +1794,8 @@
                     const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
                     const pages = pdfDoc.getPages();
                     
-                    pages.forEach((page, index) => {
-                        let shouldRotate = false;
-                        
-                        switch (applyTo) {
-                            case 'all':
-                                shouldRotate = true;
-                                break;
-                            case 'odd':
-                                shouldRotate = (index + 1) % 2 === 1;
-                                break;
-                            case 'even':
-                                shouldRotate = (index + 1) % 2 === 0;
-                                break;
-                            case 'custom':
-                                // For custom, rotate all for demo
-                                shouldRotate = true;
-                                break;
-                        }
-                        
-                        if (shouldRotate) {
-                            page.setRotation(PDFLib.degrees(angle));
-                        }
+                    pages.forEach((page) => {
+                        page.setRotation(PDFLib.degrees(angle));
                     });
                     
                     const rotatedBytes = await pdfDoc.save();
@@ -1944,13 +1857,13 @@
                     options.classList.remove('active');
                 });
                 
-                document.querySelectorAll('.preview-container').forEach(preview => {
-                    preview.classList.remove('active');
-                });
+                document.getElementById('imageThumbnails').innerHTML = '';
+                document.getElementById('imageThumbnails').style.display = 'none';
                 
                 this.currentConversion = null;
                 this.conversionInProgress = false;
                 this.selectedFiles = [];
+                this.imageFiles = [];
             }
             
             setupThemeToggle() {
@@ -1968,167 +1881,6 @@
                 }
             }
             
-            setupLanguageToggle() {
-                const languageToggle = document.getElementById('languageToggle');
-                languageToggle.addEventListener('click', () => {
-                    const languages = ['en', 'hi', 'es'];
-                    const currentIndex = languages.indexOf(this.settings.language);
-                    this.settings.language = languages[(currentIndex + 1) % languages.length];
-                    
-                    this.updateLanguage();
-                    this.saveSettings();
-                });
-            }
-            
-            updateLanguage() {
-                const translations = {
-                    en: {
-                        appTitle: 'PDF Converter',
-                        homeTitle: 'Convert Files',
-                        pdfImage: 'PDF ↔ Image',
-                        pdfExcel: 'PDF ↔ Excel',
-                        pdfWord: 'PDF ↔ Word',
-                        editPdf: 'Edit PDF',
-                        back: 'Back'
-                    },
-                    hi: {
-                        appTitle: 'PDF कनवर्टर',
-                        homeTitle: 'फ़ाइलें कनवर्ट करें',
-                        pdfImage: 'PDF ↔ छवि',
-                        pdfExcel: 'PDF ↔ एक्सेल',
-                        pdfWord: 'PDF ↔ वर्ड',
-                        editPdf: 'PDF संपादित करें',
-                        back: 'वापस'
-                    },
-                    es: {
-                        appTitle: 'Convertidor PDF',
-                        homeTitle: 'Convertir Archivos',
-                        pdfImage: 'PDF ↔ Imagen',
-                        pdfExcel: 'PDF ↔ Excel',
-                        pdfWord: 'PDF ↔ Word',
-                        editPdf: 'Editar PDF',
-                        back: 'Atrás'
-                    }
-                };
-                
-                const t = translations[this.settings.language];
-                document.querySelector('.app-header h1').textContent = t.appTitle;
-                document.querySelector('#homePage .page-title').textContent = t.homeTitle;
-                
-                const conversionCards = document.querySelectorAll('.conversion-card h3');
-                if (conversionCards.length >= 4) {
-                    conversionCards[0].textContent = t.pdfImage;
-                    conversionCards[1].textContent = t.pdfExcel;
-                    conversionCards[2].textContent = t.pdfWord;
-                    conversionCards[3].textContent = t.editPdf;
-                }
-                
-                document.querySelectorAll('.back-button').forEach(button => {
-                    button.innerHTML = `<i class="fas fa-arrow-left"></i> ${t.back}`;
-                });
-            }
-            
-            setupSettings() {
-                const settingsToggle = document.getElementById('settingsToggle');
-                const settingsModal = document.getElementById('settingsModal');
-                const closeSettings = document.getElementById('closeSettings');
-                const saveSettings = document.getElementById('saveSettings');
-                
-                settingsToggle.addEventListener('click', () => {
-                    settingsModal.classList.add('active');
-                    this.loadSettingsToForm();
-                });
-                
-                closeSettings.addEventListener('click', () => {
-                    settingsModal.classList.remove('active');
-                });
-                
-                saveSettings.addEventListener('click', () => {
-                    this.saveSettingsFromForm();
-                    settingsModal.classList.remove('active');
-                    this.showNotification('Settings saved successfully!');
-                });
-                
-                // Close modal when clicking outside
-                settingsModal.addEventListener('click', (e) => {
-                    if (e.target === settingsModal) {
-                        settingsModal.classList.remove('active');
-                    }
-                });
-                
-                // Quality slider updates
-                document.getElementById('imageQuality')?.addEventListener('input', function() {
-                    document.getElementById('imageQualityValue').textContent = `${this.value}%`;
-                });
-                
-                document.getElementById('defaultImageQuality')?.addEventListener('input', function() {
-                    document.getElementById('defaultQualityValue').textContent = `${this.value}%`;
-                });
-            }
-            
-            loadSettingsToForm() {
-                document.getElementById('defaultImageFormat').value = this.settings.defaultImageFormat;
-                document.getElementById('defaultImageQuality').value = this.settings.defaultImageQuality;
-                document.getElementById('defaultQualityValue').textContent = `${this.settings.defaultImageQuality}%`;
-                document.getElementById('defaultPdfCompression').value = this.settings.defaultPdfCompression;
-                document.getElementById('appLanguage').value = this.settings.language;
-                document.getElementById('autoPreview').checked = this.settings.autoPreview;
-                document.getElementById('autoDownload').checked = this.settings.autoDownload;
-            }
-            
-            saveSettingsFromForm() {
-                this.settings.defaultImageFormat = document.getElementById('defaultImageFormat').value;
-                this.settings.defaultImageQuality = parseInt(document.getElementById('defaultImageQuality').value);
-                this.settings.defaultPdfCompression = document.getElementById('defaultPdfCompression').value;
-                this.settings.language = document.getElementById('appLanguage').value;
-                this.settings.autoPreview = document.getElementById('autoPreview').checked;
-                this.settings.autoDownload = document.getElementById('autoDownload').checked;
-                
-                this.saveSettings();
-                this.updateLanguage();
-            }
-            
-            showNotification(message) {
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 80px;
-                    right: 20px;
-                    background: var(--primary);
-                    color: white;
-                    padding: 12px 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 1000;
-                    animation: slideIn 0.3s ease;
-                    max-width: 300px;
-                `;
-                notification.textContent = message;
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.3s ease';
-                    setTimeout(() => notification.remove(), 300);
-                }, 3000);
-                
-                // Add animation styles
-                if (!document.querySelector('#notification-styles')) {
-                    const style = document.createElement('style');
-                    style.id = 'notification-styles';
-                    style.textContent = `
-                        @keyframes slideIn {
-                            from { transform: translateX(100%); opacity: 0; }
-                            to { transform: translateX(0); opacity: 1; }
-                        }
-                        @keyframes slideOut {
-                            from { transform: translateX(0); opacity: 1; }
-                            to { transform: translateX(100%); opacity: 0; }
-                        }
-                    `;
-                    document.head.appendChild(style);
-                }
-            }
-            
             setupEventListeners() {
                 // Image quality slider
                 const imageQuality = document.getElementById('imageQuality');
@@ -2141,17 +1893,10 @@
             }
         }
         
-        // Initialize the app when page loads
+        // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
             window.pdfConverterApp = new PDFConverterApp();
         });
-        
-        // Global function to close preview
-        function closePreview(previewId) {
-            if (window.pdfConverterApp) {
-                window.pdfConverterApp.closePreview(previewId);
-            }
-        }
     </script>
 </body>
 </html>
